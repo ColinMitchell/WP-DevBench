@@ -24,16 +24,13 @@ export default function IndexRouter() {
  */
 function InnerContent() {
 	return (
-		<div className="light" style={{colorScheme: 'light'}}>
+		<div className="light pr-5" style={{colorScheme: 'light'}}>
 			<Header/>
-			<div className="flex">
-				<Sidebar/>
-				<main className="w-full pt-0">
-					<Routes>
-						{isAuthorized(['administrator']) && <Route path="/" element={<DevBench/>}/>}
-					</Routes>
-				</main>
-			</div>
+            <main className="w-full pt-0">
+                <Routes>
+                    {isAuthorized(['administrator']) && <Route path="/" element={<DevBench/>}/>}
+                </Routes>
+            </main>
 			<Toaster/>
 		</div>
 	)
