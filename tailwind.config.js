@@ -91,11 +91,6 @@ module.exports = {
         'text-white',
         'text-xl',
         'bg-gradient-to-r',
-        'from-purple-900',
-        'via-purple-500',
-        'to-amber-500',
-        'border-purple-900',
-        'border-orange-500',
         'p-0',
     ]
 }

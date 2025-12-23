@@ -84,7 +84,7 @@ export default function Result({ response, disabled = false }: ResultProps) {
                                 fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
                                 '--w-rjv-font-family': 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
                                 '--w-rjv-color': 'hsl(var(--foreground))',
-                                '--w-rjv-key-string': 'hsl(var(--primary))',
+                                '--w-rjv-key-string': 'hsl(var(--foreground))',
                                 '--w-rjv-background-color': 'transparent',
                                 '--w-rjv-line-color': 'hsl(var(--border))',
                                 '--w-rjv-arrow-color': 'hsl(var(--muted-foreground))',
@@ -112,62 +112,62 @@ export default function Result({ response, disabled = false }: ResultProps) {
 
     return (
         <TooltipProvider>
-        <Card className="flex flex-col h-full">
-            <CardHeader className="pb-3 flex-shrink-0">
-                <div className="flex items-center gap-2 relative">
-                    <FileText className="h-5 w-5" />
-                    <CardTitle className="text-lg">Results</CardTitle>
+            <Card className="flex flex-col h-full dark:bg-slate-900 dark:border-slate-800">
+                <CardHeader className="pb-3 flex-shrink-0">
+                    <div className="flex items-center gap-2 relative">
+                        <FileText className="h-5 w-5" />
+                        <CardTitle className="text-lg dark:text-white">Results</CardTitle>
 
-                    { ( response && isValidJson() ) && (
-                        <div className="absolute top-0 right-0 flex gap-2">
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="secondary"
-                                        size="sm"
-                                        onClick={() => setIsExpanded(!isExpanded)}
-                                        className="h-7 w-7 p-0"
-                                    >
-                                        {isExpanded ? (
-                                            <Minimize2 className="h-3 w-3" />
-                                        ) : (
-                                            <Expand className="h-3 w-3" />
-                                        )}
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>{isExpanded ? "Minimize results area" : "Expand results area"}</p>
-                                </TooltipContent>
-                            </Tooltip>
+                        { ( response && isValidJson() ) && (
+                            <div className="absolute top-0 right-0 flex gap-2">
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
+                                            onClick={() => setIsExpanded(!isExpanded)}
+                                            className="h-7 w-7 p-0"
+                                        >
+                                            {isExpanded ? (
+                                                <Minimize2 className="h-3 w-3" />
+                                            ) : (
+                                                <Expand className="h-3 w-3" />
+                                            )}
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{isExpanded ? "Minimize results area" : "Expand results area"}</p>
+                                    </TooltipContent>
+                                </Tooltip>
 
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="secondary"
-                                        size="sm"
-                                        onClick={copyToClipboard}
-                                        className="h-7 w-7 p-0"
-                                        disabled={!hasResponse}
-                                    >
-                                        {copied ? (
-                                            <Check className="h-3 w-3 text-green-600" />
-                                        ) : (
-                                            <Copy className="h-3 w-3" />
-                                        )}
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>{copied ? "Copied to clipboard!" : hasResponse ? "Copy results to clipboard" : "No results to copy"}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </div>
-                    )}
-                </div>
-            </CardHeader>
-            <CardContent className="flex-1 min-h-0">
-                {renderContent()}
-            </CardContent>
-        </Card>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
+                                            onClick={copyToClipboard}
+                                            className="h-7 w-7 p-0"
+                                            disabled={!hasResponse}
+                                        >
+                                            {copied ? (
+                                                <Check className="h-3 w-3 text-green-600" />
+                                            ) : (
+                                                <Copy className="h-3 w-3" />
+                                            )}
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{copied ? "Copied to clipboard!" : hasResponse ? "Copy results to clipboard" : "No results to copy"}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
+                        )}
+                    </div>
+                </CardHeader>
+                <CardContent className="flex-1 min-h-0">
+                    {renderContent()}
+                </CardContent>
+            </Card>
         </TooltipProvider>
     );
 }

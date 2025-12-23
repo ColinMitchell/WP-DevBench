@@ -23,18 +23,18 @@ export default function Selector({functions, selectedFunction, setSelectedFuncti
 					role="combobox"
 					aria-label="Load a hook..."
 					aria-expanded={open}
-					className="flex-1 justify-between lg:max-w-[600px]"
+					className="flex-1 justify-between lg:max-w-[600px] dark:bg-slate-700 dark:border-slate-600 dark:text-white"
 				>
 					{selectedFunction ? `${selectedFunction.class}->${selectedFunction.funcName}()` : "Load a function..."}
 					<ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className="w-[600px] p-0">
+			<PopoverContent className="w-[600px] p-0 dark:bg-slate-800 dark:border-slate-600">
 				<Command>
-					<CommandInput placeholder="Type to search..."/>
-					<CommandList>
+					<CommandInput placeholder="Type to search..." className="dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"/>
+					<CommandList className="dark:bg-slate-800">
 						{functions ? (
-							<CommandGroup heading="Functions">
+							<CommandGroup heading="Functions" className="dark:text-slate-300">
 								{functions.map((item, index) => (
 									<CommandItem
 										key={index}
@@ -44,16 +44,18 @@ export default function Selector({functions, selectedFunction, setSelectedFuncti
 											setOpen(false)
 										}}
 										value={item.funcName}
+										className="dark:text-white dark:hover:bg-slate-700 dark:focus:bg-slate-700 dark:aria-selected:bg-slate-600"
 									>
 										{item.class}-&gt;{item.funcName}()
 									</CommandItem>
 								))}
 							</CommandGroup>
 						) : (
-							<CommandEmpty>No Functions found.</CommandEmpty>
+							<CommandEmpty className="dark:text-slate-400">No Functions found.</CommandEmpty>
 						)}
 					</CommandList>
 				</Command>
 			</PopoverContent>
 		</Popover>
-) }
+	)
+}

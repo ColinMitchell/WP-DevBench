@@ -10,6 +10,7 @@ import {CircleCheck, LoaderCircle, Play} from "lucide-react";
 import Result from "@components/devbench/Result";
 import History from "@components/devbench/History";
 import FunctionParams from "@components/devbench/FunctionParams";
+import {ThemeToggle} from "@components/global/ThemeToggle";
 
 interface RunHistoryItem {
     id: string;
@@ -65,9 +66,9 @@ export default function DevBench() {
             title: `Running: ${functionToUse.class} → ${functionToUse.funcName}()`,
             description: (
                 <span className="flex items-center">
-                <LoaderCircle className="w-4 h-4 text-gray-400 animate-spin mr-2" />
-                Started at: {new Date(startTime).toLocaleTimeString()}
-            </span>
+                        <LoaderCircle className="w-4 h-4 dark:text-slate-400 text-gray-400 animate-spin mr-2" />
+                        Started at: {new Date(startTime).toLocaleTimeString()}
+                    </span>
             ),
             duration: 100000,
         });
@@ -251,11 +252,14 @@ export default function DevBench() {
     }, [loading, selectedFunction, paramData]);
 
     return (
-        <Wrapper title="Sandbox">
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm bg-gray-50">
-                <div className="bg-white">
+        <Wrapper title="WP DevBench">
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm bg-slate-50 dark:bg-slate-950">
+                <div className="bg-white dark:bg-slate-900">
                     <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
-                        <h2 className="text-lg font-semibold whitespace-nowrap flex-none upppercase">Function Runner</h2>
+                        <div className="flex items-center gap-2">
+                            <h1 className="text-lg font-semibold whitespace-nowrap flex-none upppercase dark:text-slate-100">WP DevBench</h1>
+                            <ThemeToggle />
+                        </div>
                         <div className="ml-auto flex-auto flex w-full space-x-2 sm:justify-end">
                             <Selector
                                 functions={functions}
@@ -266,7 +270,7 @@ export default function DevBench() {
                             <Button
                                 onClick={() => runFunction()}
                                 disabled={!selectedFunction || loading}
-                                className="px-4 bg-primary hover:bg-primary/90"
+                                className="px-4 bg-primary hover:bg-primary/90 dark:bg-slate-800 dark:hover:bg-slate-600 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 <Play className="w-4 h-4 mr-2"/>
                                 {loading ? 'Running...' : 'Run Function'}
@@ -278,7 +282,7 @@ export default function DevBench() {
                 <Separator/>
 
                 {/* Main Content Area */}
-                <div className="container py-6 bg-gray-50">
+                <div className="container py-6 bg-slate-50 dark:bg-slate-950">
                     <div className="flex gap-6 h-full">
                         {/* Left Side - 70% */}
                         <div className="flex-1 space-y-6" style={{ flexBasis: '70%' }}>
@@ -292,7 +296,7 @@ export default function DevBench() {
                                 />
                             )}
 
-                            <div className="bg-gray-50 rounded-lg">
+                            <div className="bg-slate-50 rounded-lg dark:bg-slate-900">
                                 <Result response={funcResponse} disabled={loading}/>
                             </div>
                         </div>

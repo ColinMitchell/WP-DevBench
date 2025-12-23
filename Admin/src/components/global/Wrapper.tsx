@@ -11,7 +11,7 @@ interface WrapperProps {
 
 const Wrapper = ({ title, children, className }: WrapperProps) => {
 	return (
-		<div className="flex-1 space-y-4 pt-6">
+		<div className="flex-1 space-y-4 pt-6 pr-5 dark:bg-slate-950">
 			{children}
 		</div>
 	);
