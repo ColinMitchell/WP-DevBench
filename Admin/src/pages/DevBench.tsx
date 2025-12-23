@@ -26,7 +26,7 @@ export default function DevBench() {
     const [loading, setLoading] = React.useState <boolean>(false)
     const [functions, setFunctions] = useState<FuncInterface[] | null>(null);
     const [funcResponse, setFuncResponse] = useState<string>("");
-    const [paramData, setParamData] = useState<Array<any>>([]);
+    const [paramData, setParamData] = useState<any>([]);
     const [runHistory, setRunHistory] = useState<RunHistoryItem[]>([]);
     const {toast} = useToast();
 
@@ -51,6 +51,7 @@ export default function DevBench() {
             timestamp: new Date(),
             status: 'running'
         };
+
         setRunHistory(prev => [newRun, ...prev]);
 
         // Start Function Toast
@@ -64,8 +65,6 @@ export default function DevBench() {
             ),
             duration: 100000,
         });
-
-        console.log( paramData );
 
         try {
             const response = await apiClient.post(
@@ -124,7 +123,6 @@ export default function DevBench() {
      * Get a list of all the functions from the api
      */
     const getFunctions = async () => {
-
         const response: unknown = await apiClient.get('/devbench/functions')
             .catch(error => {
                 const message =
@@ -146,7 +144,7 @@ export default function DevBench() {
      * @param data
      */
     const updateParams = (data: any) => {
-        setParamData(data);
+        setParamData(data || {});
     }
 
     /**
@@ -169,12 +167,106 @@ export default function DevBench() {
     };
 
     /**
+     * Run function with specific parameters
+     */
+    const runFunctionWithParams = async (func: FuncInterface, params: any[]) => {
+        const runId = Date.now().toString();
+        setLoading(true);
+
+        const startTime = Date.now();
+
+        // Add to run history with running status
+        const newRun: RunHistoryItem = {
+            id: runId,
+            function: func,
+            params: params,
+            timestamp: new Date(),
+            status: 'running'
+        };
+
+        setRunHistory(prev => [newRun, ...prev]);
+
+        // Start Function Toast
+        toast({
+            title: `Running: ${func.class} → ${func.funcName}()`,
+            description: (
+                <span className="flex items-center">
+            <LoaderCircle className="w-4 h-4 text-gray-400 animate-spin mr-2" />
+            Started at: {new Date(startTime).toLocaleTimeString()}
+        </span>
+            ),
+            duration: 100000,
+        });
+
+        try {
+            const response = await apiClient.post(
+                {
+                    funcName: func.funcName,
+                    paramData: params,
+                    username: window.wpDevBench.userName
+                },
+                "/devbench/functions"
+            );
+
+            const endTime = Date.now();
+            const duration = ((endTime - startTime) / 1000).toFixed(2);
+
+            // Update run history with success status
+            setRunHistory(prev => prev.map(run =>
+                run.id === runId
+                    ? { ...run, status: 'success' as const, duration }
+                    : run
+            ));
+
+            // Completed Function Toast
+            toast({
+                title: `${func.class}->${func.funcName}() Completed!`,
+                description: (
+                    <span className="flex items-center">
+						<CircleCheck  className="w-4 h-4 text-green-800 mr-2"/>
+                Execution time: {duration} seconds
+            </span>
+            ),
+            duration: 10000,
+        });
+
+        setFuncResponse(JSON.stringify(response, null, 2).replace(/^"|"$/g, ""));
+    } catch (error) {
+        // Update run history with error status
+        setRunHistory(prev => prev.map(run =>
+            run.id === runId
+                ? { ...run, status: 'error' as const }
+                : run
+        ));
+
+        // Error Toast
+        toast({
+            variant: "destructive",
+            title: `Error running function: ${func.class}->${func.funcName}()`,
+            description: "See the debug.log for more information and try again.",
+            duration: 10000,
+        });
+    } finally {
+        setLoading(false);
+    }
+};
+
+    /**
      * Rerun a previous function execution
      */
     const rerunFunction = (run: RunHistoryItem) => {
+        console.log( run );
+
+        // Set the selected function first
         setSelectedFunction(run.function);
-        setParamData(run.params);
-        // The actual execution will happen when user clicks run again
+
+        // Use a timeout to ensure the function is set and component has re-rendered
+        // before setting the param data and running the function
+        setTimeout(() => {
+            setParamData(run.params);
+            // Run the function directly with the stored parameters
+            runFunctionWithParams(run.function, run.params);
+        }, 0);
     };
 
     // init useEffect
@@ -205,8 +297,8 @@ export default function DevBench() {
         // Save the selected function to localStorage whenever it changes
         if (selectedFunction) {
             localStorage.setItem('selectedFunction', JSON.stringify(selectedFunction));
-            // Remove any param form data if function is changed.
-            setParamData([]);
+            // Only clear param data if function is changed via selector, not rerun
+            // setParamData({});
         } else {
             localStorage.removeItem('selectedFunction');
         }

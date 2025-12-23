@@ -1,4 +1,5 @@
-import React, {useState, useMemo} from 'react';
+
+import React, {useState, useMemo, useEffect} from 'react';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
@@ -14,7 +15,7 @@ import {noValidator} from '@/utils/noValidator';
 
 interface FunctionParamsProps {
     selectedFunction: FuncInterface | null;
-    paramData: any[];
+    paramData: any;
     updateParams: (data: any) => void;
     onRun: () => void;
     loading: boolean;
@@ -29,8 +30,16 @@ export default function FunctionParams({
                                        }: FunctionParamsProps) {
 
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [formData, setFormData] = useState<any>({});
 
-    const hasParamData = paramData && Object.keys(paramData).length > 0;
+    const hasParamData = formData && Object.keys(formData).length > 0;
+
+    // Update form data when paramData changes (e.g., from history rerun)
+    useEffect(() => {
+        if (paramData && typeof paramData === 'object') {
+            setFormData(paramData);
+        }
+    }, [paramData]);
 
     // Create custom widgets for the parameter form
     const widgets = useMemo(
@@ -38,8 +47,11 @@ export default function FunctionParams({
             CheckboxWidget: function (props: WidgetProps) {
                 return (
                     <div className="flex items-center space-x-2 mb-4">
-                        <Checkbox checked={props.value} onCheckedChange={props.onChange} value={props.value}
-                                  id={props.id}/>
+                        <Checkbox
+                            checked={props.value || false}
+                            onCheckedChange={(checked) => props.onChange(checked)}
+                            id={props.id}
+                        />
                         <label htmlFor={props.id} className="text-sm font-medium leading-none">{props.label}</label>
                     </div>
                 )
@@ -48,7 +60,11 @@ export default function FunctionParams({
                 return (
                     <FormItem className="mb-4">
                         <label htmlFor={props.id} className="text-sm font-medium leading-none">{props.label}</label>
-                        <Input onChange={e => props.onChange(e.target.value)} value={props.value} id={props.id}/>
+                        <Input
+                            onChange={e => props.onChange(e.target.value)}
+                            value={props.value || ''}
+                            id={props.id}
+                        />
                     </FormItem>
                 );
             },
@@ -58,7 +74,10 @@ export default function FunctionParams({
                 return (
                     <FormItem className="mb-4">
                         <label className="text-sm font-medium">{props.label}</label>
-                        <Select onValueChange={props.onChange} value={props.value}>
+                        <Select
+                            onValueChange={props.onChange}
+                            value={props.value || ''}
+                        >
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select an option"/>
                             </SelectTrigger>
@@ -93,6 +112,11 @@ export default function FunctionParams({
         },
     };
 
+    const handleFormChange = (e: any) => {
+        setFormData(e.formData);
+        updateParams(e.formData);
+    };
+
     return (
         <Card className="w-full">
             <CardHeader className="py-3">
@@ -124,42 +148,28 @@ export default function FunctionParams({
             >
                 <div className="space-y-4">
                     <div className="space-y-4">
-                        {/*<div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border">
-                            <div className="flex items-center space-x-3">
-                                <div className="w-8 h-8 bg-primary/10 rounded-md flex items-center justify-center">
-                                    <Code2 className="w-4 h-4 text-primary"/>
-                                </div>
-                                <div>
-                                    <div className="text-sm font-medium text-foreground">
-                                        {selectedFunction.class}::{selectedFunction.funcName}()
-                                    </div>
-                                </div>
-                            </div>
-                        </div>*/}
-
                         {schema && (
                             <div className="border rounded-lg p-4 bg-background">
                                 <div className="flex gap-4 h-full">
                                     {/* Left Side - Form inputs (70%) */}
-                                    <div className="flex-1" style={{ flexBasis: '70%' }}>
+                                    <div className="flex-[0.7]">
                                         <Form
                                             schema={schema}
                                             validator={noValidator}
-                                            onChange={(e) => updateParams(e.formData)}
+                                            onChange={handleFormChange}
                                             uiSchema={uiSchema}
                                             widgets={widgets}
-                                            formData={paramData}
+                                            formData={formData}
                                         />
                                     </div>
 
-                                    {/* Right Side - Current Parameters (30%) */}
                                     {hasParamData && (
-                                        <div className="flex-shrink-0" style={{ flexBasis: '30%' }}>
+                                        <div className="flex-[0.3]">
                                             <div className="bg-muted rounded-lg p-3 h-fit sticky top-0">
                                                 <h4 className="text-sm font-medium mb-2">Current Parameters:</h4>
                                                 <pre className="text-xs text-muted-foreground whitespace-pre-wrap break-words">
-                                                            {JSON.stringify(paramData, null, 2)}
-                                                        </pre>
+                                                    {JSON.stringify(formData, null, 2)}
+                                                </pre>
                                             </div>
                                         </div>
                                     )}

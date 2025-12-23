@@ -17,9 +17,9 @@ export default function Result({ response }: ResultProps) {
 
     const hasResponse = response && response.trim() !== "";
 
-    // Check if response is valid JSON
     const isValidJson = () => {
         if (!response) return false;
+
         try {
             JSON.parse(response);
             return true;
