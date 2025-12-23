@@ -28,13 +28,13 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'success':
-                return 'bg-green-100 text-green-800 border-green-200';
+                return 'dark:bg-emerald-950 dark:text-emerald-200 dark:border-emerald-800 bg-emerald-50 text-emerald-900 border-emerald-200';
             case 'error':
-                return 'bg-red-100 text-red-800 border-red-200';
+                return 'dark:bg-rose-950 dark:text-rose-200 dark:border-rose-800 bg-rose-50 text-rose-900 border-rose-200';
             case 'running':
-                return 'bg-blue-100 text-blue-800 border-blue-200';
+                return 'dark:bg-blue-950 dark:text-blue-200 dark:border-blue-800 bg-blue-50 text-blue-900 border-blue-200';
             default:
-                return 'bg-gray-100 text-gray-800 border-gray-200';
+                return 'dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 bg-slate-100 text-slate-900 border-slate-200';
         }
     };
 
@@ -52,19 +52,19 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
     };
 
     return (
-        <Card className="h-full">
-            <CardHeader className="pb-3">
+        <Card className="h-full dark:bg-slate-900 dark:border-slate-800">
+            <CardHeader className="pb-3 dark:border-slate-800">
                 <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg flex items-center">
+                    <CardTitle className="text-lg flex items-center dark:text-slate-100">
                         History
-                        {disabled && <span className="text-sm text-muted-foreground ml-2">(Function Running...)</span>}
+                        {disabled && <span className="text-sm dark:text-slate-400 text-muted-foreground ml-2">(Function Running...)</span>}
                     </CardTitle>
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={onClear}
                         disabled={runs.length === 0 || disabled}
-                        className="h-8"
+                        className="h-8 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
                         <Trash2 className="w-4 h-4 mr-1" />
                         Clear
@@ -74,7 +74,7 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
             <CardContent className="pt-0">
                 <div className="space-y-3 max-h-[600px] overflow-y-auto">
                     {runs.length === 0 ? (
-                        <p className="text-sm text-muted-foreground text-center py-8">
+                        <p className="text-sm dark:text-slate-400 text-muted-foreground text-center py-8">
                             No recent runs yet. Execute a function to see history here.
                         </p>
                     ) : (
@@ -83,18 +83,18 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
                                 key={run.id}
                                 className={cn(
                                     "border rounded-lg p-4 space-y-3 transition-all duration-200",
-                                    "hover:bg-muted/30 hover:shadow-sm",
-                                    run.status === 'running' && "border-blue-200 bg-blue-50/30",
-                                    run.status === 'success' && "border-green-200 bg-green-50/30",
-                                    run.status === 'error' && "border-red-200 bg-red-50/30"
+                                    "dark:hover:bg-slate-800/50 hover:bg-muted/30 hover:shadow-sm",
+                                    run.status === 'running' && "dark:border-blue-800 dark:bg-blue-950/30 border-blue-200 bg-blue-50/30",
+                                    run.status === 'success' && "dark:border-emerald-800 dark:bg-emerald-950/30 border-emerald-200 bg-emerald-50/30",
+                                    run.status === 'error' && "dark:border-rose-800 dark:bg-rose-950/30 border-rose-200 bg-rose-50/30"
                                 )}
                             >
                                 <div className="flex items-start justify-between">
                                     <div className="min-w-0 flex-1">
-                                        <div className="text-sm font-medium truncate">
+                                        <div className="text-sm font-medium truncate dark:text-slate-200">
                                             {run.function.class}::{run.function.funcName}()
                                         </div>
-                                        <div className="flex items-center text-xs text-muted-foreground mt-1">
+                                        <div className="flex items-center text-xs dark:text-slate-400 text-muted-foreground mt-1">
                                             <Clock className="w-3 h-3 mr-1" />
                                             {run.timestamp.toLocaleTimeString()}
                                             {run.duration && (
@@ -116,12 +116,12 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
                                 </div>
 
                                 {run.params && Object.keys(run.params).length > 0 && (
-                                    <div className="text-xs text-muted-foreground">
+                                    <div className="text-xs dark:text-slate-400 text-muted-foreground">
                                         <ParamsDataPopover params={run.params}>
-                                            <div className="relative mt-1 p-2 bg-muted/30 rounded text-xs font-mono cursor-pointer hover:bg-muted/50 transition-colors">
+                                            <div className="relative mt-1 p-2 dark:bg-slate-800 dark:text-slate-300 bg-muted/30 rounded text-xs font-mono cursor-pointer dark:hover:bg-slate-700 hover:bg-muted/50 transition-colors">
                                                 {/* Absolute positioned icon trigger */}
                                                 <div className="absolute top-2 right-2">
-                                                    <Button variant="ghost" size="sm" className="h-5 w-5 p-0 bg-background/80 hover:bg-background">
+                                                    <Button variant="ghost" size="sm" className="h-5 w-5 p-0 dark:bg-slate-900/80 dark:hover:bg-slate-800 bg-background/80 hover:bg-background">
                                                         <Eye className="h-3 w-3" />
                                                     </Button>
                                                 </div>
@@ -142,7 +142,7 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
                                             variant="outline"
                                             size="sm"
                                             onClick={() => onRerun(run)}
-                                            className="h-7 text-xs"
+                                            className="h-7 text-xs dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                                             disabled={disabled}
                                         >
                                             <Play className="w-3 h-3 mr-1" />
@@ -152,7 +152,7 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                className="h-7 text-xs text-amber-600 hover:text-amber-700"
+                                                className="h-7 text-xs dark:text-amber-400 dark:hover:text-amber-300 text-amber-600 hover:text-amber-700"
                                                 onClick={() => {/* Add error details handler */}}
                                             >
                                                 <AlertTriangle className="w-3 h-3 mr-1" />
@@ -164,7 +164,7 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
                                         variant="ghost"
                                         size="sm"
                                         onClick={() => onRemove(run.id)}
-                                        className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                                        className="h-7 w-7 p-0 dark:text-slate-500 dark:hover:text-rose-400 text-muted-foreground hover:text-destructive"
                                         disabled={disabled}
                                     >
                                         <Trash2 className="w-3 h-3" />

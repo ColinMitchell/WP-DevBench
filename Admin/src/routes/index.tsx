@@ -8,13 +8,16 @@ import React from "react";
 import {isAuthorized} from "@utils/authUtils";
 import {cn} from "@lib/utils";
 import RouteBasedTitle from "@components/global/RouteBasedTitle";
+import {ThemeProvider, useTheme} from "@/contexts/ThemeContext";
 
 export default function IndexRouter() {
 	return (
-		<HashRouter>
-			<RouteBasedTitle />
-			<InnerContent />
-		</HashRouter>
+        <ThemeProvider>
+            <HashRouter>
+                <RouteBasedTitle />
+                <InnerContent />
+            </HashRouter>
+        </ThemeProvider>
 	)
 }
 
@@ -23,9 +26,11 @@ export default function IndexRouter() {
  * @constructor
  */
 function InnerContent() {
+    const { isDark } = useTheme();
+
 	return (
-		<div className="light pr-5" style={{colorScheme: 'light'}}>
-			<Header/>
+        <div className={isDark ? "dark" : "light"} style={{colorScheme: isDark ? 'dark' : 'light'}}>
+			{/*<Header/>*/}
             <main className="w-full pt-0">
                 <Routes>
                     {isAuthorized(['administrator']) && <Route path="/" element={<DevBench/>}/>}

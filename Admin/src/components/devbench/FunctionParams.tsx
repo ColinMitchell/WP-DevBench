@@ -50,8 +50,9 @@ export default function FunctionParams({
                             checked={props.value || false}
                             onCheckedChange={(checked) => props.onChange(checked)}
                             id={props.id}
+                            className="dark:border-slate-600 dark:bg-slate-700"
                         />
-                        <label htmlFor={props.id} className="text-sm font-medium leading-none">{props.label}</label>
+                        <label htmlFor={props.id} className="text-sm font-medium leading-none dark:text-white">{props.label}</label>
                     </div>
                 )
             },
@@ -63,6 +64,7 @@ export default function FunctionParams({
                             onChange={e => props.onChange(e.target.value)}
                             value={props.value || ''}
                             id={props.id}
+                            className="dark:bg-slate-700 dark:border-slate-600 dark:text-white"
                         />
                     </FormItem>
                 );
@@ -77,10 +79,10 @@ export default function FunctionParams({
                             onValueChange={props.onChange}
                             value={props.value || ''}
                         >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full dark:bg-slate-700 dark:border-slate-600 dark:text-white">
                                 <SelectValue placeholder="Select an option"/>
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="dark:bg-slate-700 dark:border-slate-600">
                                 <SelectGroup>
                                     {options.map((option: any, index: number) => (
                                         <SelectItem key={index} value={option.value}>
@@ -117,10 +119,10 @@ export default function FunctionParams({
     };
 
     return (
-        <Card className={cn("w-full", disabled && "opacity-50 pointer-events-none")}>
+        <Card className={cn("w-full dark:bg-slate-900 dark:border-slate-800", disabled && "opacity-50 pointer-events-none")}>
             <CardHeader className="py-3">
                 <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg flex items-center">
+                    <CardTitle className="text-lg flex items-center dark:text-white">
                         <Settings className="w-5 h-5 mr-2"/>
                         Parameters
                         {disabled && <span className="text-sm text-muted-foreground ml-2">(Function Running...)</span>}
@@ -143,14 +145,14 @@ export default function FunctionParams({
 
             <CardContent
                 className={cn(
-                    "pt-0 transition-all duration-200 ease-in-out",
+                    "pt-0 transition-all duration-200 ease-in-out ",
                     isCollapsed ? "max-h-0 overflow-hidden pb-0" : "max-h-96 overflow-y-auto"
                 )}
             >
                 <div className="space-y-4">
-                    <div className="space-y-4">
+                    <div className="space-y-4 ">
                         {schema && (
-                            <div className="border rounded-lg p-4 bg-background">
+                            <div className="border rounded-lg p-4 dark:bg-slate-800">
                                 <div className="flex gap-4 h-full">
                                     {/* Left Side - Form inputs (70%) */}
                                     <div className="flex-[0.7]">

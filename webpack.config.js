@@ -7,6 +7,7 @@ module.exports = {
         ...defaultConfig.entry,
         devbench: path.resolve(process.cwd(), 'Admin/src/devbench', 'index.tsx'),
         editor: path.resolve(process.cwd(), 'Admin/src', 'editor.ts'),
+        'dark-mode': path.resolve(process.cwd(), 'Admin/src', 'wpcontent-dark-mode.js'),
         'globals': path.resolve(process.cwd(), 'Admin/src', 'globals.css'), // Add entry for globals.css
     },
     watchOptions: {
