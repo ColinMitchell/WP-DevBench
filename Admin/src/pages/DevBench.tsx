@@ -3,187 +3,313 @@ import {Separator} from "@components/ui/separator"
 import React, {useEffect, useState} from "react";
 import Wrapper from "@components/global/Wrapper";
 import Selector from "@components/devbench/Selector";
-import ParamsPopover from "@components/devbench/ParamsPopover";
-import {Textarea} from "@components/ui/textarea";
 import {useToast} from "@components/ui/use-toast"
 import {apiClient} from "@utils/client"
 import {FuncInterface} from "@/types/types";
-import {CircleCheck, LoaderCircle} from "lucide-react";
+import {CircleCheck, LoaderCircle, Play} from "lucide-react";
+import Result from "@components/devbench/Result";
+import History from "@components/devbench/History";
+import FunctionParams from "@components/devbench/FunctionParams";
+
+interface RunHistoryItem {
+    id: string;
+    function: FuncInterface;
+    params: any[];
+    timestamp: Date;
+    duration?: string;
+    status: 'success' | 'error' | 'running';
+}
 
 export default function DevBench() {
 
-	const [selectedFunction, setSelectedFunction] = React.useState <FuncInterface | null>(null)
-	const [loading, setLoading] = React.useState <boolean>(false)
-	const [functions, setFunctions] = useState<FuncInterface[] | null>(null);
-	const [funcResponse, setFuncResponse] = useState<string>("");
-	const [paramData, setParamData] = useState<Array<any>>([]);
-	const {toast} = useToast();
+    const [selectedFunction, setSelectedFunction] = React.useState <FuncInterface | null>(null)
+    const [loading, setLoading] = React.useState <boolean>(false)
+    const [functions, setFunctions] = useState<FuncInterface[] | null>(null);
+    const [funcResponse, setFuncResponse] = useState<string>("");
+    const [paramData, setParamData] = useState<any>([]);
+    const [runHistory, setRunHistory] = useState<RunHistoryItem[]>([]);
+    const {toast} = useToast();
 
-	/**
-	 * Main Run Function... function
-	 */
-	const runFunction = async () => {
-		if (!selectedFunction) {
-			return;
-		}
+    /**
+     * Main Run Function... function
+     */
+    const runFunction = async (overrideFunction?: FuncInterface, overrideParams?: any) => {
+        const functionToUse = overrideFunction || selectedFunction;
+        const paramsToUse = overrideParams !== undefined ? overrideParams : paramData;
 
-		setLoading(true);
+        if (!functionToUse) {
+            return;
+        }
 
-		const startTime = Date.now();
+        const runId = Date.now().toString();
+        setLoading(true);
 
-		// Start Function Toast
-		toast({
-			title: `Running: ${selectedFunction.class} → ${selectedFunction.funcName}()`,
-			description: (
-				<span className="flex items-center">
-            <LoaderCircle className="w-4 h-4 text-gray-400 animate-spin mr-2" />
-            Started at: {new Date(startTime).toLocaleTimeString()}
-        </span>
-			),
-			duration: 100000,
-		});
+        const startTime = Date.now();
 
-		console.log( paramData );
+        const newRun: RunHistoryItem = {
+            id: runId,
+            function: functionToUse,
+            params: paramsToUse,
+            timestamp: new Date(),
+            status: 'running'
+        };
 
-		try {
-			const response = await apiClient.post(
-				{
-					funcName: selectedFunction.funcName,
-					paramData,
-          username: window.wpDevBench.userName
-				},
-				"/devbench/functions"
-			);
+        console.log(newRun);
 
-			const endTime = Date.now(); // Capture end time
-			const duration = ((endTime - startTime) / 1000).toFixed(2); // Convert to seconds
+        setRunHistory(prev => {
+            const updated = [newRun, ...prev];
+            return updated.slice(0, 20);
+        });
 
-			// Completed Function Toast
-			toast({
-				title: `${selectedFunction.class}->${selectedFunction.funcName}() Completed!`,
-				description: (
-					<span className="flex items-center">
-						<CircleCheck  className="w-4 h-4 text-green-800 mr-2"/>
-            Execution time: {duration} seconds
-        </span>
-				),
-				duration: 10000,
-			});
+        toast({
+            title: `Running: ${functionToUse.class} → ${functionToUse.funcName}()`,
+            description: (
+                <span className="flex items-center">
+                <LoaderCircle className="w-4 h-4 text-gray-400 animate-spin mr-2" />
+                Started at: {new Date(startTime).toLocaleTimeString()}
+            </span>
+            ),
+            duration: 100000,
+        });
 
-			setFuncResponse(JSON.stringify(response, null, 2).replace(/^"|"$/g, ""));
-		} catch (error) {
-			// Error Toast
-			toast({
-				variant: "destructive",
-				title: `Error running function: ${selectedFunction.class}->${selectedFunction.funcName}()`,
-				description: "See the debug.log for more information and try again.",
-				duration: 10000,
-			});
-		} finally {
-			setLoading(false);
-		}
-	}
+        try {
+            const response = await apiClient.post(
+                {
+                    funcName: functionToUse.funcName,
+                    paramData: paramsToUse,
+                    username: window.wpDevBench.userName
+                },
+                "/devbench/functions"
+            );
 
-	/**
-	 * Get a list of all the functions from the api
-	 */
-	const getFunctions = async () => {
+            const endTime = Date.now();
+            const duration = ((endTime - startTime) / 1000).toFixed(2);
 
-		const response: unknown = await apiClient.get('/devbench/functions')
-			.catch(error => {
-				const message =
-					typeof error.message === "object" && Object.keys(error.message).length > 0
-						? JSON.stringify(error.message)
-						: error.response.statusText;
+            setRunHistory(prev => prev.map(run =>
+                run.id === runId
+                    ? { ...run, status: 'success' as const, duration }
+                    : run
+            ));
 
-				console.log(message);
-				return;
-			});
+            toast({
+                title: `${functionToUse.class}->${functionToUse.funcName}() Completed!`,
+                description: (
+                    <span className="flex items-center">
+                    <CircleCheck className="w-4 h-4 text-green-800 mr-2"/>
+                    Execution time: {duration} seconds
+                </span>
+                ),
+                duration: 10000,
+            });
 
-		const data: FuncInterface[] = response as FuncInterface[];
+            setFuncResponse(JSON.stringify(response, null, 2).replace(/^"|"$/g, ""));
+        } catch (error) {
+            setRunHistory(prev => prev.map(run =>
+                run.id === runId
+                    ? { ...run, status: 'error' as const }
+                    : run
+            ));
 
-		setFunctions(data);
-	};
+            toast({
+                variant: "destructive",
+                title: `Error running function: ${functionToUse.class}->${functionToUse.funcName}()`,
+                description: "See the debug.log for more information and try again.",
+                duration: 10000,
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
 
-	/**
-	 * Update the params state
-	 * @param data
-	 */
-	const updateParams = (data: any) => {
-		setParamData(data);
-	}
+    /**
+     * Clear the results data
+     */
+    const clearResults = () => {
+        setFuncResponse("");
+    };
 
-	// init useEffect
-	useEffect(() => {
-		getFunctions();
-	}, []);
+    /**
+     * Get a list of all the functions from the api
+     */
+    const getFunctions = async () => {
+        const response: unknown = await apiClient.get('/devbench/functions')
+            .catch(error => {
+                const message =
+                    typeof error.message === "object" && Object.keys(error.message).length > 0
+                        ? JSON.stringify(error.message)
+                        : error.response.statusText;
 
-	useEffect(() => {
-		// Load the selected function from localStorage when the component mounts
-		const storedFunction = localStorage.getItem('selectedFunction');
-		//const storedFunctionParamData = localStorage.getItem('selectedFunctionParamData');
+                console.log(message);
+                return;
+            });
 
-		if (storedFunction) {
-			setSelectedFunction(JSON.parse(storedFunction));
-		}
-		/*if (storedFunctionParamData) {
-			setParamData(JSON.parse(storedFunctionParamData));
-		}*/
-	}, []);
+        const data: FuncInterface[] = response as FuncInterface[];
 
-	useEffect(() => {
-		// Save the selected function to localStorage whenever it changes
-		if (selectedFunction) {
-			localStorage.setItem('selectedFunction', JSON.stringify(selectedFunction));
-			// localStorage.setItem('selectedFunctionParamData', JSON.stringify(paramData));
+        console.log( data );
 
-			// Remove any param form data if function is changed.
-			setParamData([]);
-		} else {
-			localStorage.removeItem('selectedFunction');
-			// localStorage.removeItem('selectedFunctionParamData');
-		}
-	}, [selectedFunction]);
+        setFunctions(data);
+    };
 
-	// Add event listener for Enter key
-	useEffect(() => {
-		const handleKeyPress = (event: KeyboardEvent) => {
-			if (event.key === "Enter" && !loading && selectedFunction) {
-				runFunction();
-			}
-		};
+    /**
+     * Update the params state
+     * @param data
+     */
+    const updateParams = (data: any) => {
+        setParamData(data || {});
+    }
 
-		window.addEventListener("keydown", handleKeyPress);
-		return () => {
-			window.removeEventListener("keydown", handleKeyPress);
-		};
-	}, [loading, selectedFunction]); // Dependencies to ensure correct behavior
+    /**
+     * Clear all run history
+     */
+    const clearRunHistory = () => {
+        setRunHistory([]);
+        localStorage.removeItem('runHistory');
+    };
 
-	return (
-		<Wrapper title="Sandbox">
-			<div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-				<div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
-					<h2 className="text-lg font-semibold whitespace-nowrap flex-none">PHP Functions</h2>
-					<div className="ml-auto flex-auto flex w-full space-x-2 sm:justify-end">
-						{selectedFunction && selectedFunction.params !== null && (
-							<ParamsPopover selectedFunction={selectedFunction} paramData={paramData} updateParams={updateParams}/>
-						)}
-						<Selector functions={functions} selectedFunction={selectedFunction} setSelectedFunction={setSelectedFunction}/>
-						<Button onClick={runFunction} disabled={!selectedFunction}>{loading ? 'Running...' : 'Run Function'}</Button>
-					</div>
-				</div>
-				<Separator/>
-			</div>
-			{funcResponse && (
-				<div className="flex h-full flex-col space-y-4">
-					<Textarea
-						placeholder="Run a function and see results here..."
-						className="min-h-[400px] flex-1 p-4 md:min-h-[700px] lg:min-h-[700px]"
-						value={funcResponse}
-						readOnly={true}
-					/>
-				</div>
-			)}
-		</Wrapper>
-	)
+    /**
+     * Remove a specific run from history
+     */
+    const removeRun = (id: string) => {
+        setRunHistory(prev => {
+            const updated = prev.filter(run => run.id !== id);
+            localStorage.setItem('runHistory', JSON.stringify(updated));
+            return updated;
+        });
+    };
+
+    /**
+     * Rerun a previous function execution
+     */
+    const rerunFunction = (run: RunHistoryItem) => {
+        setSelectedFunction(run.function);
+
+        // Use setTimeout to ensure the selectedFunction state update completes first
+        setTimeout(() => {
+            setParamData(run.params);
+            // Then run the function
+            setTimeout(() => {
+                runFunction(run.function, run.params);
+            }, 0);
+        }, 0);
+    };
+
+    // init useEffect
+    useEffect(() => {
+        getFunctions();
+    }, []);
+
+    useEffect(() => {
+        // Load the selected function from localStorage when the component mounts
+        const storedFunction = localStorage.getItem('selectedFunction');
+        const storedRunHistory = localStorage.getItem('runHistory');
+
+        if (storedFunction) {
+            setSelectedFunction(JSON.parse(storedFunction));
+        }
+
+        if (storedRunHistory) {
+            const parsed = JSON.parse(storedRunHistory);
+            // Convert timestamp strings back to Date objects
+            const withDates = parsed.map((run: any) => ({
+                ...run,
+                timestamp: new Date(run.timestamp)
+            }));
+            setRunHistory(withDates);
+        }
+    }, []);
+
+    useEffect(() => {
+        // Save the selected function to localStorage whenever it changes
+        if (selectedFunction) {
+            localStorage.setItem('selectedFunction', JSON.stringify(selectedFunction));
+            // Only clear param data if function is changed via selector, not rerun
+            setParamData({});
+        } else {
+            localStorage.removeItem('selectedFunction');
+        }
+    }, [selectedFunction]);
+
+    useEffect(() => {
+        // Save run history to localStorage
+        if (runHistory.length > 0) {
+            localStorage.setItem('runHistory', JSON.stringify(runHistory));
+        }
+    }, [runHistory]);
+
+    // Add event listener for Enter key
+    useEffect(() => {
+        const handleKeyPress = (event: KeyboardEvent) => {
+            if (event.key === "Enter" && !loading && selectedFunction) {
+                runFunction();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyPress);
+        return () => {
+            window.removeEventListener("keydown", handleKeyPress);
+        };
+    }, [loading, selectedFunction, paramData]);
+
+    return (
+        <Wrapper title="Sandbox">
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm bg-gray-50">
+                <div className="bg-white">
+                    <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
+                        <h2 className="text-lg font-semibold whitespace-nowrap flex-none upppercase">Function Runner</h2>
+                        <div className="ml-auto flex-auto flex w-full space-x-2 sm:justify-end">
+                            <Selector
+                                functions={functions}
+                                selectedFunction={selectedFunction}
+                                setSelectedFunction={setSelectedFunction}
+                                onClearResults={clearResults}
+                            />
+                            <Button
+                                onClick={() => runFunction()}
+                                disabled={!selectedFunction || loading}
+                                className="px-4 bg-primary hover:bg-primary/90"
+                            >
+                                <Play className="w-4 h-4 mr-2"/>
+                                {loading ? 'Running...' : 'Run Function'}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                <Separator/>
+
+                {/* Main Content Area */}
+                <div className="container py-6 bg-gray-50">
+                    <div className="flex gap-6 h-full">
+                        {/* Left Side - 70% */}
+                        <div className="flex-1 space-y-6" style={{ flexBasis: '70%' }}>
+                            {selectedFunction && selectedFunction.params !== null && (
+                                <FunctionParams
+                                    selectedFunction={selectedFunction}
+                                    paramData={paramData}
+                                    updateParams={updateParams}
+                                    loading={loading}
+                                    disabled={loading}
+                                />
+                            )}
+
+                            <div className="bg-gray-50 rounded-lg">
+                                <Result response={funcResponse} disabled={loading}/>
+                            </div>
+                        </div>
+
+                        {/* Right Side - 30% */}
+                        <div className="flex-shrink-0" style={{ flexBasis: '30%' }}>
+                            <History
+                                runs={runHistory}
+                                onClear={clearRunHistory}
+                                onRerun={rerunFunction}
+                                onRemove={removeRun}
+                                disabled={loading}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Wrapper>
+    )
 }

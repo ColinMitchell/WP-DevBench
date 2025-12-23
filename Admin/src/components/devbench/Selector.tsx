@@ -9,9 +9,10 @@ export interface selectorProps {
 	functions: FuncInterface[]|null;
 	selectedFunction: FuncInterface|null;
 	setSelectedFunction: (item: FuncInterface|null) => void;
+	onClearResults?: () => void;
 }
 
-export default function Selector({functions, selectedFunction, setSelectedFunction} : selectorProps) {
+export default function Selector({functions, selectedFunction, setSelectedFunction, onClearResults} : selectorProps) {
 	const [open, setOpen] = React.useState(false)
 
 	return (
@@ -39,6 +40,7 @@ export default function Selector({functions, selectedFunction, setSelectedFuncti
 										key={index}
 										onSelect={() => {
 											setSelectedFunction(item)
+											onClearResults?.()
 											setOpen(false)
 										}}
 										value={item.funcName}

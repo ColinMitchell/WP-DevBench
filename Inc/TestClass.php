@@ -48,11 +48,10 @@ final class TestClass {
 		);
 	}
 
-	public function test( $param_one, $param_two, $param_three ): string {
-		error_log( print_r( $param_one, true ) );
-		error_log( print_r( $param_two, true ) );
-		error_log( print_r( $param_three, true ) );
-		return $param_one;
+	public function test( $param_one, $param_two, $param_three ): mixed {
+		error_log( print_r( get_post(2), true ) );
+
+		return get_post(2);
 	}
 
 	public function test_no_params(): string {
