@@ -33,8 +33,11 @@ export default function DevBench() {
     /**
      * Main Run Function... function
      */
-    const runFunction = async () => {
-        if (!selectedFunction) {
+    const runFunction = async (overrideFunction?: FuncInterface, overrideParams?: any) => {
+        const functionToUse = overrideFunction || selectedFunction;
+        const paramsToUse = overrideParams !== undefined ? overrideParams : paramData;
+
+        if (!functionToUse) {
             return;
         }
 
@@ -43,20 +46,23 @@ export default function DevBench() {
 
         const startTime = Date.now();
 
-        // Add to run history with running status
         const newRun: RunHistoryItem = {
             id: runId,
-            function: selectedFunction,
-            params: paramData,
+            function: functionToUse,
+            params: paramsToUse,
             timestamp: new Date(),
             status: 'running'
         };
 
-        setRunHistory(prev => [newRun, ...prev]);
+        console.log(newRun);
 
-        // Start Function Toast
+        setRunHistory(prev => {
+            const updated = [newRun, ...prev];
+            return updated.slice(0, 20);
+        });
+
         toast({
-            title: `Running: ${selectedFunction.class} → ${selectedFunction.funcName}()`,
+            title: `Running: ${functionToUse.class} → ${functionToUse.funcName}()`,
             description: (
                 <span className="flex items-center">
                 <LoaderCircle className="w-4 h-4 text-gray-400 animate-spin mr-2" />
@@ -69,48 +75,44 @@ export default function DevBench() {
         try {
             const response = await apiClient.post(
                 {
-                    funcName: selectedFunction.funcName,
-                    paramData,
+                    funcName: functionToUse.funcName,
+                    paramData: paramsToUse,
                     username: window.wpDevBench.userName
                 },
                 "/devbench/functions"
             );
 
-            const endTime = Date.now(); // Capture end time
-            const duration = ((endTime - startTime) / 1000).toFixed(2); // Convert to seconds
+            const endTime = Date.now();
+            const duration = ((endTime - startTime) / 1000).toFixed(2);
 
-            // Update run history with success status
             setRunHistory(prev => prev.map(run =>
                 run.id === runId
                     ? { ...run, status: 'success' as const, duration }
                     : run
             ));
 
-            // Completed Function Toast
             toast({
-                title: `${selectedFunction.class}->${selectedFunction.funcName}() Completed!`,
+                title: `${functionToUse.class}->${functionToUse.funcName}() Completed!`,
                 description: (
                     <span className="flex items-center">
-						<CircleCheck  className="w-4 h-4 text-green-800 mr-2"/>
-                Execution time: {duration} seconds
-            </span>
+                    <CircleCheck className="w-4 h-4 text-green-800 mr-2"/>
+                    Execution time: {duration} seconds
+                </span>
                 ),
                 duration: 10000,
             });
 
             setFuncResponse(JSON.stringify(response, null, 2).replace(/^"|"$/g, ""));
         } catch (error) {
-            // Update run history with error status
             setRunHistory(prev => prev.map(run =>
                 run.id === runId
                     ? { ...run, status: 'error' as const }
                     : run
             ));
 
-            // Error Toast
             toast({
                 variant: "destructive",
-                title: `Error running function: ${selectedFunction.class}->${selectedFunction.funcName}()`,
+                title: `Error running function: ${functionToUse.class}->${functionToUse.funcName}()`,
                 description: "See the debug.log for more information and try again.",
                 duration: 10000,
             });
@@ -118,6 +120,13 @@ export default function DevBench() {
             setLoading(false);
         }
     }
+
+    /**
+     * Clear the results data
+     */
+    const clearResults = () => {
+        setFuncResponse("");
+    };
 
     /**
      * Get a list of all the functions from the api
@@ -135,6 +144,8 @@ export default function DevBench() {
             });
 
         const data: FuncInterface[] = response as FuncInterface[];
+
+        console.log( data );
 
         setFunctions(data);
     };
@@ -167,105 +178,18 @@ export default function DevBench() {
     };
 
     /**
-     * Run function with specific parameters
-     */
-    const runFunctionWithParams = async (func: FuncInterface, params: any[]) => {
-        const runId = Date.now().toString();
-        setLoading(true);
-
-        const startTime = Date.now();
-
-        // Add to run history with running status
-        const newRun: RunHistoryItem = {
-            id: runId,
-            function: func,
-            params: params,
-            timestamp: new Date(),
-            status: 'running'
-        };
-
-        setRunHistory(prev => [newRun, ...prev]);
-
-        // Start Function Toast
-        toast({
-            title: `Running: ${func.class} → ${func.funcName}()`,
-            description: (
-                <span className="flex items-center">
-            <LoaderCircle className="w-4 h-4 text-gray-400 animate-spin mr-2" />
-            Started at: {new Date(startTime).toLocaleTimeString()}
-        </span>
-            ),
-            duration: 100000,
-        });
-
-        try {
-            const response = await apiClient.post(
-                {
-                    funcName: func.funcName,
-                    paramData: params,
-                    username: window.wpDevBench.userName
-                },
-                "/devbench/functions"
-            );
-
-            const endTime = Date.now();
-            const duration = ((endTime - startTime) / 1000).toFixed(2);
-
-            // Update run history with success status
-            setRunHistory(prev => prev.map(run =>
-                run.id === runId
-                    ? { ...run, status: 'success' as const, duration }
-                    : run
-            ));
-
-            // Completed Function Toast
-            toast({
-                title: `${func.class}->${func.funcName}() Completed!`,
-                description: (
-                    <span className="flex items-center">
-						<CircleCheck  className="w-4 h-4 text-green-800 mr-2"/>
-                Execution time: {duration} seconds
-            </span>
-            ),
-            duration: 10000,
-        });
-
-        setFuncResponse(JSON.stringify(response, null, 2).replace(/^"|"$/g, ""));
-    } catch (error) {
-        // Update run history with error status
-        setRunHistory(prev => prev.map(run =>
-            run.id === runId
-                ? { ...run, status: 'error' as const }
-                : run
-        ));
-
-        // Error Toast
-        toast({
-            variant: "destructive",
-            title: `Error running function: ${func.class}->${func.funcName}()`,
-            description: "See the debug.log for more information and try again.",
-            duration: 10000,
-        });
-    } finally {
-        setLoading(false);
-    }
-};
-
-    /**
      * Rerun a previous function execution
      */
     const rerunFunction = (run: RunHistoryItem) => {
-        console.log( run );
-
-        // Set the selected function first
         setSelectedFunction(run.function);
 
-        // Use a timeout to ensure the function is set and component has re-rendered
-        // before setting the param data and running the function
+        // Use setTimeout to ensure the selectedFunction state update completes first
         setTimeout(() => {
             setParamData(run.params);
-            // Run the function directly with the stored parameters
-            runFunctionWithParams(run.function, run.params);
+            // Then run the function
+            setTimeout(() => {
+                runFunction(run.function, run.params);
+            }, 0);
         }, 0);
     };
 
@@ -282,6 +206,7 @@ export default function DevBench() {
         if (storedFunction) {
             setSelectedFunction(JSON.parse(storedFunction));
         }
+
         if (storedRunHistory) {
             const parsed = JSON.parse(storedRunHistory);
             // Convert timestamp strings back to Date objects
@@ -298,7 +223,7 @@ export default function DevBench() {
         if (selectedFunction) {
             localStorage.setItem('selectedFunction', JSON.stringify(selectedFunction));
             // Only clear param data if function is changed via selector, not rerun
-            // setParamData({});
+            setParamData({});
         } else {
             localStorage.removeItem('selectedFunction');
         }
@@ -323,26 +248,33 @@ export default function DevBench() {
         return () => {
             window.removeEventListener("keydown", handleKeyPress);
         };
-    }, [loading, selectedFunction]);
+    }, [loading, selectedFunction, paramData]);
 
     return (
         <Wrapper title="Sandbox">
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-                {/* Header with function selector */}
-                <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
-                    <h2 className="text-lg font-semibold whitespace-nowrap flex-none">Function Runner</h2>
-                    <div className="ml-auto flex-auto flex w-full space-x-2 sm:justify-end">
-                        <Selector functions={functions} selectedFunction={selectedFunction} setSelectedFunction={setSelectedFunction}/>
-                        <Button
-                            onClick={runFunction}
-                            disabled={!selectedFunction || loading}
-                            className="px-4 bg-primary hover:bg-primary/90"
-                        >
-                            <Play className="w-4 h-4 mr-2"/>
-                            {loading ? 'Running...' : 'Run Function'}
-                        </Button>
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm bg-gray-50">
+                <div className="bg-white">
+                    <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
+                        <h2 className="text-lg font-semibold whitespace-nowrap flex-none upppercase">Function Runner</h2>
+                        <div className="ml-auto flex-auto flex w-full space-x-2 sm:justify-end">
+                            <Selector
+                                functions={functions}
+                                selectedFunction={selectedFunction}
+                                setSelectedFunction={setSelectedFunction}
+                                onClearResults={clearResults}
+                            />
+                            <Button
+                                onClick={() => runFunction()}
+                                disabled={!selectedFunction || loading}
+                                className="px-4 bg-primary hover:bg-primary/90"
+                            >
+                                <Play className="w-4 h-4 mr-2"/>
+                                {loading ? 'Running...' : 'Run Function'}
+                            </Button>
+                        </div>
                     </div>
                 </div>
+
                 <Separator/>
 
                 {/* Main Content Area */}
@@ -355,13 +287,13 @@ export default function DevBench() {
                                     selectedFunction={selectedFunction}
                                     paramData={paramData}
                                     updateParams={updateParams}
-                                    onRun={runFunction}
                                     loading={loading}
+                                    disabled={loading}
                                 />
                             )}
 
                             <div className="bg-gray-50 rounded-lg">
-                                <Result response={funcResponse}/>
+                                <Result response={funcResponse} disabled={loading}/>
                             </div>
                         </div>
 
@@ -372,6 +304,7 @@ export default function DevBench() {
                                 onClear={clearRunHistory}
                                 onRerun={rerunFunction}
                                 onRemove={removeRun}
+                                disabled={loading}
                             />
                         </div>
                     </div>

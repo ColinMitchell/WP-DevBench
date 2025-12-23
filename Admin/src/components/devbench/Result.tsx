@@ -2,16 +2,17 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Copy, Check, Expand, Minimize2 } from "lucide-react";
+import {FileText, Copy, Check, Expand, Minimize2, Loader2} from "lucide-react";
 import { cn } from "@/lib/utils";
 import JsonView from '@uiw/react-json-view';
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@components/ui/tooltip";
 
 interface ResultProps {
     response: string;
+    disabled?: boolean;
 }
 
-export default function Result({ response }: ResultProps) {
+export default function Result({ response, disabled = false }: ResultProps) {
     const [copied, setCopied] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -39,12 +40,25 @@ export default function Result({ response }: ResultProps) {
     };
 
     const renderContent = () => {
-        if (!hasResponse) {
+        if (!hasResponse && !disabled) {
             return (
                 <div className="h-full flex items-center justify-center">
                     <div className="text-center space-y-3">
                         <p className="text-muted-foreground/70 text-sm">
-                            Select a function above and click "Run Function" to execute it
+                            Select a function above and click "Run Function" to execute it.
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+
+        if (disabled && !hasResponse) {
+            return (
+                <div className="h-full flex items-center justify-center">
+                    <div className="text-center space-y-3">
+                        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mx-auto" />
+                        <p className="text-muted-foreground text-sm">
+                            Function is running... Results will appear here.
                         </p>
                     </div>
                 </div>
@@ -54,7 +68,8 @@ export default function Result({ response }: ResultProps) {
         return (
             <div className={cn(
                 "relative",
-                isExpanded ? "min-h-0" : "max-h-96 overflow-y-auto"
+                isExpanded ? "min-h-0" : "max-h-96 overflow-y-auto",
+                disabled && "opacity-50"
             )}>
                 {isValidJson() ? (
                     <div className="p-4 bg-muted/20 rounded-md border border-border/50">

@@ -1,4 +1,3 @@
-
 import React, {useState, useMemo, useEffect} from 'react';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
@@ -17,17 +16,17 @@ interface FunctionParamsProps {
     selectedFunction: FuncInterface | null;
     paramData: any;
     updateParams: (data: any) => void;
-    onRun: () => void;
     loading: boolean;
+    disabled?: boolean;
 }
 
 export default function FunctionParams({
-                                           selectedFunction,
-                                           paramData,
-                                           updateParams,
-                                           onRun,
-                                           loading
-                                       }: FunctionParamsProps) {
+        selectedFunction,
+        paramData,
+        updateParams,
+        loading,
+        disabled = false
+    }: FunctionParamsProps) {
 
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [formData, setFormData] = useState<any>({});
@@ -118,18 +117,20 @@ export default function FunctionParams({
     };
 
     return (
-        <Card className="w-full">
+        <Card className={cn("w-full", disabled && "opacity-50 pointer-events-none")}>
             <CardHeader className="py-3">
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-lg flex items-center">
                         <Settings className="w-5 h-5 mr-2"/>
                         Parameters
+                        {disabled && <span className="text-sm text-muted-foreground ml-2">(Function Running...)</span>}
                     </CardTitle>
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         className="h-8 w-8 p-0"
+                        disabled={disabled}
                     >
                         {isCollapsed ? (
                             <ChevronDown className="w-4 h-4"/>
@@ -167,7 +168,8 @@ export default function FunctionParams({
                                         <div className="flex-[0.3]">
                                             <div className="bg-muted rounded-lg p-3 h-fit sticky top-0">
                                                 <h4 className="text-sm font-medium mb-2">Current Parameters:</h4>
-                                                <pre className="text-xs text-muted-foreground whitespace-pre-wrap break-words">
+                                                <pre
+                                                    className="text-xs text-muted-foreground whitespace-pre-wrap break-words">
                                                     {JSON.stringify(formData, null, 2)}
                                                 </pre>
                                             </div>
