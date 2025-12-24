@@ -180,7 +180,6 @@ export default function FunctionParams({
                                 </div>
                             </div>
                         )}
-
                     </div>
                 </div>
             </CardContent>

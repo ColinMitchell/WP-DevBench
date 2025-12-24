@@ -92,7 +92,7 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
                                 <div className="flex items-start justify-between">
                                     <div className="min-w-0 flex-1">
                                         <div className="text-sm font-medium truncate dark:text-slate-200">
-                                            {run.function.class}::{run.function.funcName}()
+                                            {run.function.source}-&gt;{run.function.funcName}()
                                         </div>
                                         <div className="flex items-center text-xs dark:text-slate-400 text-muted-foreground mt-1">
                                             <Clock className="w-3 h-3 mr-1" />
@@ -148,17 +148,6 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
                                             <Play className="w-3 h-3 mr-1" />
                                             Rerun
                                         </Button>
-                                        {run.status === 'error' && (
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="h-7 text-xs dark:text-amber-400 dark:hover:text-amber-300 text-amber-600 hover:text-amber-700"
-                                                onClick={() => {/* Add error details handler */}}
-                                            >
-                                                <AlertTriangle className="w-3 h-3 mr-1" />
-                                                Details
-                                            </Button>
-                                        )}
                                     </div>
                                     <Button
                                         variant="ghost"

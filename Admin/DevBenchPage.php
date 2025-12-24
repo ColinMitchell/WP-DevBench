@@ -94,25 +94,14 @@ class DevBenchPage {
 	public function add_page(): void {
 		// Add the top-level menu page
 		add_menu_page(
-			page_title: __( 'WP DevBench', 'wp-devbench-plugin' ), // Page title
-			menu_title: __( 'WP DevBench', 'wp-devbench-plugin' ), // Menu title
-			capability: 'read', // Capability
-			menu_slug: self::SCREEN, // Menu slug
-			callback: [ $this, 'render_page' ], // Callback function
-			icon_url: 'dashicons-superhero', // Icon URL (using a Dashicon)
-			position: 100 // Position (optional, determines menu order)
-		);
-
-
-
-		/*add_submenu_page(
-			parent_slug: self::SCREEN,
-			page_title: __( 'DevBench', 'wp-devbench-plugin' ),
-			menu_title: __( 'DevBench', 'wp-devbench-plugin' ),
+			page_title: __( 'WP DevBench', 'wp-devbench-plugin' ),
+			menu_title: __( 'WP DevBench', 'wp-devbench-plugin' ),
 			capability: 'manage_options',
-			menu_slug: 'wp-devbench-dashboard#/devbench',
-			callback: '__return_null' // No callback, since it's a redirect to a specific URL
-		);*/
+			menu_slug: self::SCREEN,
+			callback: [ $this, 'render_page' ],
+			icon_url: 'dashicons-superhero',
+			position: 100
+		);
 	}
 
 	/**
@@ -160,26 +149,12 @@ class DevBenchPage {
 				'currentBlogId' => get_current_blog_id(),
 				'userName'      => $current_user->user_login,
 				'userRole'      => $user_role,
+				'nonce'         => wp_create_nonce( 'wp_rest' ),
 			]
 		);
 
 		echo '<div class="wp-devbench-plugin-wrap">';
 		echo '<div id="' . esc_attr( self::SCREEN ) . '"></div>';
 		echo '<div class="wp-devbench-plugin-wrap">';
-	}
-
-	/**
-	 * Bypasses edit_posts capability to allow wp_devbench_viewer to access the OpenAPI docs
-	 *
-	 * @param mixed $data
-	 *
-	 * @return mixed
-	 */
-	public function add_openai_nonce( mixed $data ): mixed {
-		if ( current_user_can( 'wp_devbevbench_viewer' ) ) {
-			$data['nonce'] = wp_create_nonce( 'wp_rest' );
-		}
-
-		return $data;
 	}
 }

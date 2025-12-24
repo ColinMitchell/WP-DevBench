@@ -15,7 +15,7 @@ final class TestClass {
 
 	public function init(): void {
 		DevBench::add_function(
-			class: get_class( $this ),
+			source: get_class( $this ),
 			function_name: 'test',
 			callback: [ $this, 'test' ],
 			params: [
@@ -40,7 +40,7 @@ final class TestClass {
 		);
 
 		DevBench::add_function(
-			class: get_class( $this ),
+			source: get_class( $this ),
 			function_name: 'test_no_params',
 			callback: [ $this, 'test_no_params' ],
 			params: [],

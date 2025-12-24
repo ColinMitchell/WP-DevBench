@@ -24,7 +24,7 @@ final class DevBench {
 	/**
 	 * Register a new DevBench function.
 	 *
-	 * @param string   $class
+	 * @param string   $source
 	 * @param string   $function_name
 	 * @param callable $callback
 	 * @param array    $params
@@ -33,15 +33,15 @@ final class DevBench {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public static function add_function( string $class, string $function_name, callable $callback, array $params = [], string $description = '' ): void {
-		$key = sanitize_title( $class . $function_name );
+	public static function add_function( string $source, string $function_name, callable $callback, array $params = [], string $description = '' ): void {
+		$key = sanitize_title( $source . $function_name );
 
 		if ( isset( self::$functions[ $key ] ) ) {
 			return;
 		}
 
 		self::$functions[ $key ] = new DevBenchFunction(
-			class: $class,
+			source: $source,
 			function_name: $function_name,
 			callback: $callback,
 			params: $params,
@@ -58,6 +58,15 @@ final class DevBench {
 		self::$functions = apply_filters( 'wp_devbench_functions', self::$functions );
 
 		return array_values( self::$functions );
+	}
+
+	/**
+	 * Backwards compatibility: Allow registration via action hook.
+	 *
+	 * @return void
+	 */
+	public function load_functions(): void {
+		do_action( 'wp_devbench_register_functions' );
 	}
 
 	/**
@@ -92,6 +101,7 @@ final class DevBench {
 
 		// Authenticate user
 		$auth_result = $this->authenticate_user( $username );
+
 		if ( is_wp_error( $auth_result ) ) {
 			return $auth_result;
 		}
@@ -125,7 +135,7 @@ final class DevBench {
 	 *
 	 * @return true|\WP_Error
 	 */
-	private function authenticate_user( string $username ) {
+	private function authenticate_user( string $username ): true|\WP_Error {
 		$user = get_user_by( 'login', $username );
 
 		if ( ! $user || ! $user->exists() ) {
@@ -155,8 +165,7 @@ final class DevBench {
 		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$function_name = $sandbox_function->funcName;
 
-		// Set up callback properly for constructor params
-		$callback = [ $sandbox_function->callback[0], $sandbox_function->callback[1] ];
+		$callback = $sandbox_function->callback;
 
 		// Add custom error handler
 		set_error_handler( [ $this, 'error_handler' ] );
