@@ -11,6 +11,16 @@ import Result from "@components/devbench/Result";
 import History from "@components/devbench/History";
 import FunctionParams from "@components/devbench/FunctionParams";
 import {ThemeToggle} from "@components/global/ThemeToggle";
+import DocsModal from "@components/global/DocsModal";
+
+interface ApiResponse {
+    success: boolean;
+    result?: any;
+    error?: string;
+    code?: string;
+    status_code?: number;
+    debug_log?: string | null;
+}
 
 interface RunHistoryItem {
     id: string;
@@ -19,6 +29,9 @@ interface RunHistoryItem {
     timestamp: Date;
     duration?: string;
     status: 'success' | 'error' | 'running';
+    result?: any;
+    error?: string;
+    debug_log?: string | null;
 }
 
 export default function DevBench() {
@@ -29,6 +42,8 @@ export default function DevBench() {
     const [funcResponse, setFuncResponse] = useState<string>("");
     const [paramData, setParamData] = useState<any>([]);
     const [runHistory, setRunHistory] = useState<RunHistoryItem[]>([]);
+    const [responseError, setResponseError] = useState<string | null>(null);
+    const [debugLog, setDebugLog] = useState<string | null>(null);
     const {toast} = useToast();
 
     /**
@@ -44,6 +59,9 @@ export default function DevBench() {
 
         const runId = Date.now().toString();
         setLoading(true);
+        setFuncResponse("");
+        setResponseError(null);
+        setDebugLog(null);
 
         const startTime = Date.now();
 
@@ -63,7 +81,7 @@ export default function DevBench() {
         });
 
         toast({
-            title: `Running: ${functionToUse.class} → ${functionToUse.funcName}()`,
+            title: `Running: ${functionToUse.source} → ${functionToUse.funcName}()`,
             description: (
                 <span className="flex items-center">
                         <LoaderCircle className="w-4 h-4 dark:text-slate-400 text-gray-400 animate-spin mr-2" />
@@ -81,40 +99,80 @@ export default function DevBench() {
                     username: window.wpDevBench.userName
                 },
                 "/devbench/functions"
-            );
+            ) as ApiResponse;
 
             const endTime = Date.now();
             const duration = ((endTime - startTime) / 1000).toFixed(2);
 
+            if (response.success) {
+                // Success case
+                setFuncResponse(JSON.stringify(response.result, null, 2));
+                setResponseError(null);
+                setDebugLog(null);
+
+                setRunHistory(prev => prev.map(run =>
+                    run.id === runId
+                        ? {
+                            ...run,
+                            status: 'success' as const,
+                            duration,
+                            result: response.result
+                          }
+                        : run
+                ));
+
+                toast({
+                    title: `${functionToUse.source}->${functionToUse.funcName}() Completed!`,
+                    description: (
+                        <span className="flex items-center">
+                        <CircleCheck className="w-4 h-4 text-green-800 mr-2"/>
+                        Execution time: {duration} seconds
+                    </span>
+                    ),
+                    duration: 10000,
+                });
+            } else {
+                // Error case
+                setFuncResponse("");
+                setResponseError(response.error || 'Unknown error occurred');
+                setDebugLog(response.debug_log || null);
+
+                setRunHistory(prev => prev.map(run =>
+                    run.id === runId
+                        ? {
+                            ...run,
+                            status: 'error' as const,
+                            duration,
+                            error: response.error,
+                            debug_log: response.debug_log
+                          }
+                        : run
+                ));
+
+                toast({
+                    variant: "destructive",
+                    title: `Error running function: ${functionToUse.source}->${functionToUse.funcName}()`,
+                    description: response.error || "See the results panel for more details.",
+                    duration: 10000,
+                });
+            }
+        } catch (error: any) {
+            const errorMessage = error?.message || 'Network error occurred';
+
             setRunHistory(prev => prev.map(run =>
                 run.id === runId
-                    ? { ...run, status: 'success' as const, duration }
+                    ? { ...run, status: 'error' as const, error: errorMessage }
                     : run
             ));
 
-            toast({
-                title: `${functionToUse.class}->${functionToUse.funcName}() Completed!`,
-                description: (
-                    <span className="flex items-center">
-                    <CircleCheck className="w-4 h-4 text-green-800 mr-2"/>
-                    Execution time: {duration} seconds
-                </span>
-                ),
-                duration: 10000,
-            });
-
-            setFuncResponse(JSON.stringify(response, null, 2).replace(/^"|"$/g, ""));
-        } catch (error) {
-            setRunHistory(prev => prev.map(run =>
-                run.id === runId
-                    ? { ...run, status: 'error' as const }
-                    : run
-            ));
+            setResponseError(errorMessage);
+            setFuncResponse("");
+            setDebugLog(null);
 
             toast({
                 variant: "destructive",
-                title: `Error running function: ${functionToUse.class}->${functionToUse.funcName}()`,
-                description: "See the debug.log for more information and try again.",
+                title: `Error running function: ${functionToUse.source}->${functionToUse.funcName}()`,
+                description: "Check your network connection and try again.",
                 duration: 10000,
             });
         } finally {
@@ -127,6 +185,8 @@ export default function DevBench() {
      */
     const clearResults = () => {
         setFuncResponse("");
+        setResponseError(null);
+        setDebugLog(null);
     };
 
     /**
@@ -258,9 +318,9 @@ export default function DevBench() {
                     <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
                         <div className="flex items-center gap-2">
                             <h1 className="text-lg font-semibold whitespace-nowrap flex-none upppercase dark:text-slate-100">WP DevBench</h1>
-                            <ThemeToggle />
                         </div>
                         <div className="ml-auto flex-auto flex w-full space-x-2 sm:justify-end">
+                            <DocsModal />
                             <Selector
                                 functions={functions}
                                 selectedFunction={selectedFunction}
@@ -270,7 +330,7 @@ export default function DevBench() {
                             <Button
                                 onClick={() => runFunction()}
                                 disabled={!selectedFunction || loading}
-                                className="px-4 bg-primary hover:bg-primary/90 dark:bg-slate-800 dark:hover:bg-slate-600 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md hover:shadow-lg"
                             >
                                 <Play className="w-4 h-4 mr-2"/>
                                 {loading ? 'Running...' : 'Run Function'}
@@ -285,7 +345,7 @@ export default function DevBench() {
                 <div className="container py-6 bg-slate-50 dark:bg-slate-950">
                     <div className="flex gap-6 h-full">
                         {/* Left Side - 70% */}
-                        <div className="flex-1 space-y-6" style={{ flexBasis: '70%' }}>
+                        <div className="space-y-6 flex-[0.7]">
                             {selectedFunction && selectedFunction.params !== null && (
                                 <FunctionParams
                                     selectedFunction={selectedFunction}
@@ -297,19 +357,28 @@ export default function DevBench() {
                             )}
 
                             <div className="bg-slate-50 rounded-lg dark:bg-slate-900">
-                                <Result response={funcResponse} disabled={loading}/>
+                                <Result
+                                    response={funcResponse}
+                                    error={responseError}
+                                    debugLog={debugLog}
+                                    disabled={loading}
+                                    selectedFunction={selectedFunction}
+                                />
                             </div>
                         </div>
 
                         {/* Right Side - 30% */}
-                        <div className="flex-shrink-0" style={{ flexBasis: '30%' }}>
-                            <History
-                                runs={runHistory}
-                                onClear={clearRunHistory}
-                                onRerun={rerunFunction}
-                                onRemove={removeRun}
-                                disabled={loading}
-                            />
+                        <div className="flex-shrink-0 flex-[0.3]">
+                            <div className="flex flex-col gap-4">
+                                <History
+                                    runs={runHistory}
+                                    onClear={clearRunHistory}
+                                    onRerun={rerunFunction}
+                                    onRemove={removeRun}
+                                    disabled={loading}
+                                />
+                                <ThemeToggle />
+                            </div>
                         </div>
                     </div>
                 </div>

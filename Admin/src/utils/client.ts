@@ -2,7 +2,6 @@ import wretch from "wretch";
 import {WretchResponse} from "wretch";
 import abort from 'wretch/addons/abort';
 
-
 type WretchError = Error & {
     status: number;
     response: WretchResponse;
@@ -17,7 +16,7 @@ const createApiClient = (baseUrl: string) =>
         .errorType("json")
         .resolve(r => r.json());
 
-const apiClient = createApiClient(window.wpDevBench.apiUrl);
-const apiBaseClient = createApiClient(window.wpDevBench.baseApiUrl);
+const apiClient = createApiClient(window.wpDevBench.apiUrl)
+    .headers({'X-WP-Nonce': window.wpDevBench.nonce});
 
-export {apiClient, apiBaseClient};
+export {apiClient};

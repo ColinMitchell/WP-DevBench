@@ -8,6 +8,7 @@ declare global {
         currentBlogId: number;
         userName: string;
         userRole: string;
+        nonce: string;
     }
 
 	interface Window {
@@ -27,7 +28,7 @@ interface NavItem {
 }
 
 interface FuncInterface {
-	class: string;
+	source: string;
 	funcName: string;
 	params: null | RJSFSchema;
 	name: string;

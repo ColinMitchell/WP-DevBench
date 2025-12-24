@@ -12,8 +12,8 @@ use Exception;
 #[AllowDynamicProperties]
 final class DevBenchFunction {
 
-	public function __construct( string $class, string $function_name, callable $callback, array|null $params, string|null $description = '' ) {
-		$this->class       = $class;
+	public function __construct( string $source, string $function_name, callable $callback, array|null $params, string|null $description = '' ) {
+		$this->source = $source;
 		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$this->funcName    = $function_name;
 		$this->callback    = $callback;

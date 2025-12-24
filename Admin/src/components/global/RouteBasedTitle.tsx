@@ -10,12 +10,11 @@ export default function RouteBasedTitle() {
 	useEffect(() => {
 		// Define titles for each route
 		const routeTitles: { [key: string]: string } = {
-			'/': `Overview < ${suffix}`,
-			'/devbench': `DevBench < ${suffix}`,
+			'/': `WP DevBench ${suffix}`,
 		};
 
 		// Set document title based on current route
-		document.title = routeTitles[routerLocation.pathname] || `DevBench < ${suffix}`;
+		document.title = routeTitles[routerLocation.pathname] || `DevBench ${suffix}`;
 
 	}, [routerLocation.pathname]);
 

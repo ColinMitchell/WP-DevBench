@@ -9,16 +9,15 @@ export function ThemeToggle() {
     return (
         <Button
             variant="ghost"
-            size="icon"
             onClick={toggleTheme}
-            className="w-9 h-9"
-            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="relative flex items-center gap-2 h-9 px-3 w-fit ml-auto border"
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-            {isDark ? (
-                <Sun className="h-4 w-4" />
-            ) : (
-                <Moon className="h-4 w-4" />
-            )}
+            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute left-3 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="ml-1 text-sm font-medium">
+                {isDark ? 'Dark' : 'Light'} Theme
+            </span>
         </Button>
     );
 }

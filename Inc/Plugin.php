@@ -25,6 +25,8 @@ class Plugin {
 	private static ?Plugin $instance = null;
 
 	public function __construct() {
+		// Include helper functions
+		require_once plugin_dir_path( __FILE__ ) . 'Helpers/functions.php';
 	}
 
 	/**
