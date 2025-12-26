@@ -6,7 +6,7 @@ import Selector from "@components/devbench/Selector";
 import {useToast} from "@components/ui/use-toast"
 import {apiClient} from "@utils/client"
 import {FuncInterface} from "@/types/types";
-import {CircleCheck, LoaderCircle, Play} from "lucide-react";
+import {CircleCheck, LoaderCircle, Play, Settings, ToolCase} from "lucide-react";
 import Result from "@components/devbench/Result";
 import History from "@components/devbench/History";
 import FunctionParams from "@components/devbench/FunctionParams";
@@ -72,8 +72,6 @@ export default function DevBench() {
             timestamp: new Date(),
             status: 'running'
         };
-
-        console.log(newRun);
 
         setRunHistory(prev => {
             const updated = [newRun, ...prev];
@@ -211,13 +209,61 @@ export default function DevBench() {
         setFunctions(data);
     };
 
+        /**
+         * Update the params state
+         * @param data
+         */
+        const updateParams = (data: any) => {
+            setParamData(data || {});
+        }
+
     /**
-     * Update the params state
-     * @param data
+     * Generate default params from function schema
      */
-    const updateParams = (data: any) => {
-        setParamData(data || {});
-    }
+    const generateDefaultParams = (func: FuncInterface | null): any => {
+        if (!func || !func.params) {
+            return {};
+        }
+
+        const defaults: any = {};
+
+        if (func.params.properties && typeof func.params.properties === 'object') {
+            Object.keys(func.params.properties).forEach(key => {
+                const property = func.params!.properties![key];
+
+                // Type guard: ensure property is an object and not false
+                if (!property || typeof property !== 'object') {
+                    defaults[key] = '';
+                    return;
+                }
+
+                const propType = (property as any).type;
+
+                // Set default based on type
+                switch (propType) {
+                    case 'boolean':
+                        defaults[key] = false;
+                        break;
+                    case 'number':
+                    case 'integer':
+                        defaults[key] = 0;
+                        break;
+                    case 'array':
+                        defaults[key] = [];
+                        break;
+                    case 'object':
+                        defaults[key] = {};
+                        break;
+                    case 'string':
+                    default:
+                        defaults[key] = '';
+                        break;
+                }
+            });
+        }
+
+        return defaults;
+    };
 
     /**
      * Clear all run history
@@ -283,8 +329,9 @@ export default function DevBench() {
         // Save the selected function to localStorage whenever it changes
         if (selectedFunction) {
             localStorage.setItem('selectedFunction', JSON.stringify(selectedFunction));
-            // Only clear param data if function is changed via selector, not rerun
-            setParamData({});
+            // Initialize params with default values from the function schema
+            const defaultParams = generateDefaultParams(selectedFunction);
+            setParamData(defaultParams);
         } else {
             localStorage.removeItem('selectedFunction');
         }
@@ -316,9 +363,15 @@ export default function DevBench() {
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm bg-slate-50 dark:bg-slate-950">
                 <div className="bg-white dark:bg-slate-900">
                     <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
-                        <div className="flex items-center gap-2">
-                            <h1 className="text-lg font-semibold whitespace-nowrap flex-none upppercase dark:text-slate-100">WP DevBench</h1>
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center shadow-lg">
+                                <ToolCase className="w-5 h-5 text-white" />
+                            </div>
+                            <h1 className="text-xl whitespace-nowrap font-bold text-slate-900 dark:text-white">
+                                WP DevBench
+                            </h1>
                         </div>
+
                         <div className="ml-auto flex-auto flex w-full space-x-2 sm:justify-end">
                             <DocsModal />
                             <Selector
@@ -346,7 +399,7 @@ export default function DevBench() {
                     <div className="flex gap-6 h-full">
                         {/* Left Side - 70% */}
                         <div className="space-y-6 flex-[0.7]">
-                            {selectedFunction && selectedFunction.params !== null && (
+                            {selectedFunction && (
                                 <FunctionParams
                                     selectedFunction={selectedFunction}
                                     paramData={paramData}

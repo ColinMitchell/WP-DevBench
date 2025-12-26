@@ -180,6 +180,16 @@ export default function FunctionParams({
                                 </div>
                             </div>
                         )}
+
+                        { !schema && (
+                            <div className="border rounded-lg p-6 dark:bg-slate-800 border-blue-200 dark:border-blue-900/30 bg-slate-30 dark:bg-blue-950/20">
+                                <div className="flex items-center gap-4">
+                                    <p className="text-sm text-slate-800 dark:text-blue-200">
+                                        This function doesn't require any parameters. See the docs for how to add parameters.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </CardContent>

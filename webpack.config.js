@@ -25,6 +25,7 @@ module.exports = {
             '@pages': path.resolve( __dirname, './Admin/src/pages' ),
             '@types': path.resolve( __dirname, './Admin/src/types' ),
             '@utils': path.resolve( __dirname, './Admin/src/utils' ),
+            '@assets': path.resolve( __dirname, './Admin/src/assets' ),
         },
     }
 
