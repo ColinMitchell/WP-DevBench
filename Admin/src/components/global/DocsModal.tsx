@@ -167,6 +167,7 @@ DevBench::add_function(
                                         <div><code className="bg-slate-200 dark:bg-slate-800 dark:text-slate-200 px-1.5 py-0.5 rounded text-xs">number</code> - Numeric input</div>
                                         <div><code className="bg-slate-200 dark:bg-slate-800 dark:text-slate-200 px-1.5 py-0.5 rounded text-xs">integer</code> - Integer input</div>
                                         <div><code className="bg-slate-200 dark:bg-slate-800 dark:text-slate-200 px-1.5 py-0.5 rounded text-xs">boolean</code> - Checkbox toggle</div>
+                                        <div><code className="bg-slate-200 dark:bg-slate-800 dark:text-slate-200 px-1.5 py-0.5 rounded text-xs">file</code> - File upload input</div>
                                     </div>
                                 </div>
 
@@ -182,6 +183,32 @@ DevBench::add_function(
     'choices' => [ 'draft', 'publish', 'pending' ],
 ]`}
                                         </pre>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4 className="font-semibold text-sm mb-2 dark:text-slate-100">File Uploads</h4>
+                                    <p className="text-sm dark:text-slate-300 mb-2">Use <code className="bg-slate-200 dark:bg-slate-800 dark:text-slate-200 px-1.5 py-0.5 rounded text-xs">type: 'file'</code> to enable file uploads. Files are automatically converted to base64 data URIs and passed to your function.</p>
+                                    <div className="bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded p-3 overflow-x-auto mb-3">
+                                        <pre className="text-xs font-mono dark:text-slate-300 text-slate-900">
+{`[
+    'id'      => 'user_file',
+    'type'    => 'file',
+    'title'   => 'Upload CSV/XML File',
+    'default' => null,
+    'accept'  => '.csv,.xml'  // Optional: restrict file types
+]`}
+                                        </pre>
+                                    </div>
+                                    <div className="bg-yellow-50 dark:bg-slate-800 border border-yellow-200 dark:border-slate-700 rounded p-3">
+                                        <p className="text-xs font-semibold text-yellow-900 dark:text-yellow-300 mb-2">📁 FILE UPLOAD DETAILS</p>
+                                        <ul className="text-xs text-yellow-800 dark:text-yellow-200 space-y-1">
+                                            <li>• <strong>Format:</strong> Files arrive as base64 data URIs (e.g., <code className="bg-white dark:bg-slate-700 dark:text-slate-200 px-1 py-0.5 rounded text-xs">data:text/csv;name=file.csv;base64,ABC123...</code>)</li>
+                                            <li>• <strong>Size Limit:</strong> Maximum 10MB per file</li>
+                                            <li>• <strong>Accept Attribute:</strong> Use comma-separated extensions like <code className="bg-white dark:bg-slate-700 dark:text-slate-200 px-1 py-0.5 rounded text-xs">.csv,.xlsx,.xml</code></li>
+                                            <li>• <strong>Security:</strong> Executable files (.exe, .bat, .sh, etc.) are automatically blocked</li>
+                                            <li>• <strong>Processing:</strong> Extract content using <code className="bg-white dark:bg-slate-700 dark:text-slate-200 px-1 py-0.5 rounded text-xs">fopen()</code> or other file functions</li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>

@@ -22,6 +22,7 @@ final class TestClass {
 				[ // https://rjsf-team.github.io/react-jsonschema-form/docs/json-schema/arrays
 					'id'    => 'param_one',
 					'type'  => 'string',
+					'default' => 'default value',
 					'title' => 'Test Field 1',
 				],
 				[
@@ -34,6 +35,13 @@ final class TestClass {
 					'type'    => 'string',
 					'title'   => 'Select Dropdown',
 					'choices' => [ 'Option 1', 'Option 2', 'Option 3' ], // by adding choices, it creates a select dropdown
+				],
+				[
+					'id'      => 'user_file',
+					'type'    => 'file',
+					'title'   => 'Upload CSV/xml File',
+					'default' => null,
+					'accept'  => '.csv,.xml'  // Optional: specify accepted file types
 				],
 			],
 			description: 'Test Description for this function.'
@@ -48,10 +56,28 @@ final class TestClass {
 		);
 	}
 
-	public function test( $param_one, $param_two, $param_three ): mixed {
-		error_log( print_r( get_post(2), true ) );
+	public function test( $param_one, $param_two, $param_three, $user_file ): mixed {
+		error_log( print_r( $user_file, true ) );
 
-		return get_post(2);
+		// Option 1: Using SimpleXML (returns object that can be converted to array)
+		$csv_data = [];
+
+		if ( ( $handle = fopen( $user_file, 'r' ) ) !== false ) {
+			// Get the first row as headers
+			$headers = fgetcsv( $handle );
+
+			// Read the rest of the rows
+			while ( ( $row = fgetcsv( $handle ) ) !== false ) {
+				// Combine headers with row data to create associative array
+				$csv_data[] = array_combine( $headers, $row );
+			}
+
+			fclose( $handle );
+		} else {
+			return [ 'error' => 'Failed to open CSV file' ];
+		}
+
+		return $csv_data;
 	}
 
 	public function test_no_params(): string {
