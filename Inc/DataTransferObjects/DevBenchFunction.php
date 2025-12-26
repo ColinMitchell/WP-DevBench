@@ -42,6 +42,15 @@ final class DevBenchFunction {
 				if ( ! empty( $param['choices'] ) ) {
 					$schema['properties'][ $param['id'] ]['enum'] = $param['choices'];
 				}
+
+				if ( $param['type'] === 'file' ) {
+					$schema['properties'][ $param['id'] ]['type'] = 'string';
+					$schema['properties'][ $param['id'] ]['format'] = 'data-url';
+
+					if ( ! empty( $param['accept'] ) ) {
+						$schema['properties'][ $param['id'] ]['accept'] = $param['accept'];
+					}
+				}
 			}
 
 			$this->params = $schema;
