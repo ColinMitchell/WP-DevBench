@@ -3,6 +3,7 @@ declare( strict_types=1 );
 
 namespace WP_DevBench\Admin\Controllers;
 
+use WP_DevBench\Inc\DataTransferObjects\DevBenchFunctionResult;
 use WP_DevBench\Inc\Services\DevBench as DevBenchService;
 
 /**
@@ -30,32 +31,33 @@ final class DevBench {
 	 * Execute a DevBench function.
 	 * Endpoint: POST /wp-json/wp-devbench/v1/functions/run
 	 *
-	 * @param \WP_REST_Request $request
+	 * @param string $function_name
+	 * @param array|null $param_data
+	 * @param string $username
 	 *
-	 * @return mixed
+	 * @return DevBenchFunctionResult
 	 */
-	public function run( \WP_REST_Request $request ): \WP_REST_Response {
-		$function_name = $request->get_param( 'funcName' );
-		$param_data    = $request->get_param( 'paramData' ) ?? [];
-		$username      = $request->get_param( 'username' );
+	public function run( string $function_name, ?array $param_data, string $username ): DevBenchFunctionResult {
 
 		// Validate required parameters
 		if ( empty( $function_name ) ) {
-			return new \WP_REST_Response( [
-				'success'     => false,
-				'error'       => 'Function name is required.',
-				'code'        => 'missing_parameter',
-				'status_code' => 400,
-			], 400 );
+			return new DevBenchFunctionResult(
+				success: false,
+				result: null,
+				error: 'Function name is required.',
+				code: 'missing_parameter',
+				status_code: 400
+			);
 		}
 
 		if ( empty( $username ) ) {
-			return new \WP_REST_Response( [
-				'success'     => false,
-				'error'       => 'Username is required.',
-				'code'        => 'missing_parameter',
-				'status_code' => 400,
-			], 400 );
+			return new DevBenchFunctionResult(
+				success: false,
+				result: null,
+				error: 'Username is required.',
+				code: 'missing_parameter',
+				status_code: 400
+			);
 		}
 
 		$result = $this->service->execute_function( $function_name, $param_data, $username );
@@ -63,19 +65,24 @@ final class DevBench {
 		if ( is_wp_error( $result ) ) {
 			$debug_log = $this->get_debug_log_tail();
 
-			return new \WP_REST_Response( [
-				'success'     => false,
-				'error'       => $result->get_error_message(),
-				'code'        => $result->get_error_code(),
-				'status_code' => $result->get_error_data()['status'] ?? 500,
-				'debug_log'   => $debug_log,
-			], 200 );
+			return new DevBenchFunctionResult(
+				success: false,
+				result: null,
+				error: $result->get_error_message(),
+				code: $result->get_error_code(),
+				status_code: $result->get_error_data()['status'] ?? 500,
+				debug_log: $debug_log
+			);
 		}
 
-		return new \WP_REST_Response( [
-			'success' => true,
-			'result'  => $result,
-		], 200 );
+		return new DevBenchFunctionResult(
+			success: true,
+			result: $result,
+			error: "",
+			code: "",
+			status_code: 200,
+			debug_log: null
+		);
 	}
 
 	/**
@@ -93,7 +100,7 @@ final class DevBench {
 		}
 
 		$file_content = file_get_contents( $debug_log_path );
-		if ( false === $file_content ) {
+		if (  empty( $file_content ) ) {
 			return null;
 		}
 

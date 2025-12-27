@@ -73,29 +73,27 @@ final class DevBench {
 	 * Execute a sandbox function by name.
 	 *
 	 * @param string $function_name
-	 * @param array  $param_data
+	 * @param array $param_data
 	 * @param string $username
 	 *
-	 * @return mixed
+	 * @return string|bool|\WP_Error
 	 */
-	public function execute_function( string $function_name, array $param_data, string $username ): mixed {
+	public function execute_function( string $function_name, array $param_data, string $username ): string|bool|WP_Error {
 		$functions = $this->get_functions();
 
 		if ( empty( $functions ) ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'no_functions',
-				'No sandbox functions registered.',
-				[ 'status' => 404 ]
+				'No sandbox functions registered.'
 			);
 		}
 
 		$sandbox_function = $this->find_function( $function_name, $functions );
 
 		if ( ! $sandbox_function ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'function_not_found',
-				sprintf( 'Could not find function: %s', $function_name ),
-				[ 'status' => 404 ]
+				sprintf( 'Could not find function: %s', $function_name )
 			);
 		}
 
@@ -157,11 +155,11 @@ final class DevBench {
 	 * Execute a sandbox function with error handling.
 	 *
 	 * @param DevBenchFunction $sandbox_function
-	 * @param array            $param_data
+	 * @param array $param_data
 	 *
-	 * @return mixed
+	 * @return string|\WP_Error
 	 */
-	private function run_function( DevBenchFunction $sandbox_function, array $param_data ): mixed {
+	private function run_function( DevBenchFunction $sandbox_function, array $param_data ): string|\WP_Error {
 		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$function_name = $sandbox_function->funcName;
 
@@ -175,14 +173,19 @@ final class DevBench {
 			$result = call_user_func_array( $callback, $param_data );
 			error_log( '✅ DevBench: Success → ' . $function_name );
 
-			return $result;
+			// If result is already a string, return as-is; otherwise JSON encode
+			if ( is_string( $result ) ) {
+				return $result;
+			}
+			return (string) json_encode( $result );
 		} catch ( \Throwable $e ) {
 			$this->log_exception( $function_name, $e );
 
+			// note: a 500 error should be returned here, but to properly show the error/debug log in the UI, we keep as 200.
 			return new \WP_Error(
 				'execution_error',
 				sprintf( 'Error executing %s: %s', $function_name, $e->getMessage() ),
-				[ 'status' => 500 ]
+				[ 'status' => 200 ]
 			);
 		} finally {
 			restore_error_handler();

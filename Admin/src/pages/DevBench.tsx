@@ -6,12 +6,13 @@ import Selector from "@components/devbench/Selector";
 import {useToast} from "@components/ui/use-toast"
 import {apiClient} from "@utils/client"
 import {FuncInterface} from "@/types/types";
-import {CircleCheck, LoaderCircle, Play, Settings, ToolCase} from "lucide-react";
+import {CircleCheck, Loader2, LoaderCircle, Play, ToolCase} from "lucide-react";
 import Result from "@components/devbench/Result";
 import History from "@components/devbench/History";
 import FunctionParams from "@components/devbench/FunctionParams";
 import {ThemeToggle} from "@components/global/ThemeToggle";
 import DocsModal from "@components/global/DocsModal";
+import {cn} from "@lib/utils";
 
 interface ApiResponse {
     success: boolean;
@@ -104,7 +105,11 @@ export default function DevBench() {
 
             if (response.success) {
                 // Success case
-                setFuncResponse(JSON.stringify(response.result, null, 2));
+                const resultToDisplay = typeof response.result === 'string'
+                        ? response.result
+                        : JSON.stringify(response.result, null, 2);
+
+                setFuncResponse(resultToDisplay);
                 setResponseError(null);
                 setDebugLog(null);
 
@@ -155,7 +160,7 @@ export default function DevBench() {
                 });
             }
         } catch (error: any) {
-            const errorMessage = error?.message || 'Network error occurred';
+            const errorMessage = error?.message || 'Something went wrong running the function.';
 
             setRunHistory(prev => prev.map(run =>
                 run.id === runId
@@ -170,7 +175,7 @@ export default function DevBench() {
             toast({
                 variant: "destructive",
                 title: `Error running function: ${functionToUse.source}->${functionToUse.funcName}()`,
-                description: "Check your network connection and try again.",
+                description: "Something went wrong running the function.",
                 duration: 10000,
             });
         } finally {
@@ -383,10 +388,23 @@ export default function DevBench() {
                             <Button
                                 onClick={() => runFunction()}
                                 disabled={!selectedFunction || loading}
-                                className="px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md hover:shadow-lg"
+                                className={cn(
+                                    "relative px-5 h-10 flex items-center gap-2 font-medium",
+                                    "bg-blue-600 hover:bg-blue-700 active:bg-blue-800",
+                                    "dark:bg-blue-600 dark:hover:bg-blue-500",
+                                    "text-white shadow-md hover:shadow-lg",
+                                    "transition-all duration-200",
+                                    "disabled:opacity-50 disabled:cursor-not-allowed",
+                                    loading && "animate-pulse"
+                                )}
                             >
-                                <Play className="w-4 h-4 mr-2"/>
-                                {loading ? 'Running...' : 'Run Function'}
+                                {loading ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <Play className="w-4 h-4" />
+                                )}
+
+                                <span>{loading ? "Running…" : "Run Function"}</span>
                             </Button>
                         </div>
                     </div>
