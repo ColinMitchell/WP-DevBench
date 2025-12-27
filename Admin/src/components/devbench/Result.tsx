@@ -108,14 +108,14 @@ export default function Result({ response, error, debugLog, disabled = false, se
         return (
             <div className="space-y-4">
                 {hasError && (
-                    <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-md">
+                    <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-md overflow-hidden">
                         <div className="flex gap-3">
                             <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0 overflow-hidden">
                                 <h4 className="font-semibold text-red-900 dark:text-red-200 mb-2">Error Details</h4>
-                                <pre className="text-sm text-red-800 dark:text-red-300 whitespace-pre-wrap break-words font-mono">
-                                    {error}
-                                </pre>
+                                <pre className="text-sm text-red-800 dark:text-red-300 whitespace-pre-wrap break-words font-mono overflow-x-auto max-w-full" style={{ wordBreak: 'break-all' }}>
+                                        {error}
+                                    </pre>
                             </div>
                         </div>
                     </div>
@@ -170,7 +170,7 @@ export default function Result({ response, error, debugLog, disabled = false, se
                         isExpanded ? "min-h-0" : "max-h-96 overflow-y-auto",
                     )}>
                         <div>
-                            <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-2 px-4 pt-4">Debug Log</h4>
+                            <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-2 px-4 pt-4">Debug Log (Showing last 50 lines)</h4>
                             <pre className={cn(
                                 "whitespace-pre-wrap break-words text-xs font-mono p-4 bg-slate-800 text-slate-200 rounded-md",
                                 "border border-slate-700"
@@ -190,9 +190,7 @@ export default function Result({ response, error, debugLog, disabled = false, se
                 <CardHeader className="pb-3 flex-shrink-0">
                     <div className="flex items-center gap-2 relative">
                         <FileText className="h-5 w-5" />
-                        <CardTitle className="text-lg dark:text-white">
-                            {hasError ? 'Error Details' : 'Results'}
-                        </CardTitle>
+                        <CardTitle className="text-lg dark:text-white">Results</CardTitle>
 
                         { ((hasResponse && isValidJson()) || hasError || hasDebugLog) && (
                             <div className="absolute top-0 right-0 flex gap-2">

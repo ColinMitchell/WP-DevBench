@@ -5,4 +5,3 @@ parameters:
         - Inc
     ignoreErrors:
         - '#Constant .* not found#'
-    phpVersion: 80500

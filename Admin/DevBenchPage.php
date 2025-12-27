@@ -28,13 +28,7 @@ class DevBenchPage {
 
 		add_action( 'admin_menu', [ $this, 'add_page' ] );
 
-		// This adds a link in the plugins list table
-		add_action( 'plugin_action_links_' . plugin_basename( WP_DEVBENCH_MAIN_FILE ), [ $this, 'add_menu_page' ] );
-
 		add_action( 'admin_enqueue_scripts', [ $this, 'register_assets' ] );
-
-		// Filter used by the wp-openapi plugin to manage security
-		add_filter( 'wp-openapi-filters-elements-props', [ $this, 'add_openai_nonce' ], 10, 1 );
 	}
 
 	/**

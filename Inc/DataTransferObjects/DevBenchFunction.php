@@ -3,16 +3,19 @@ declare( strict_types=1 );
 
 namespace WP_DevBench\Inc\DataTransferObjects;
 
-use AllowDynamicProperties;
 use Exception;
 
 /**
  * DTO - DevBenchFunction
  */
-#[AllowDynamicProperties]
 final class DevBenchFunction {
+	public string $source;
+	public string $funcName;
+	public $callback;
+	public ?array $params;
+	public string $description;
 
-	public function __construct( string $source, string $function_name, callable $callback, array|null $params, string|null $description = '' ) {
+	public function __construct( string $source, string $function_name, callable $callback, ?array $params = null, string $description = '' ) {
 		$this->source = $source;
 		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$this->funcName    = $function_name;
