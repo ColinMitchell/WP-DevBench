@@ -17,41 +17,41 @@ final class TestClass {
 		DevBench::add_function(
 			source: get_class( $this ),
 			function_name: 'test',
-			callback: [ $this, 'test' ],
-			params: [
-				[ // https://rjsf-team.github.io/react-jsonschema-form/docs/json-schema/arrays
+			callback: array( $this, 'test' ),
+			params: array(
+				array( // https://rjsf-team.github.io/react-jsonschema-form/docs/json-schema/arrays
 					'id'    => 'param_one',
 					'type'  => 'string',
 					'default' => 'default value',
 					'title' => 'Test Field 1',
-				],
-				[
+				),
+				array(
 					'id'    => 'param_two',
 					'type'  => 'boolean',
 					'title' => 'Test Field 2',
-				],
-				[ // https://rjsf-team.github.io/react-jsonschema-form/docs/json-schema/arrays#multiple-choice-list
+				),
+				array( // https://rjsf-team.github.io/react-jsonschema-form/docs/json-schema/arrays#multiple-choice-list
 					'id'      => 'param_three',
 					'type'    => 'string',
 					'title'   => 'Select Dropdown',
-					'choices' => [ 'Option 1', 'Option 2', 'Option 3' ], // by adding choices, it creates a select dropdown
-				],
-				[
+					'choices' => array( 'Option 1', 'Option 2', 'Option 3' ), // by adding choices, it creates a select dropdown
+				),
+				array(
 					'id'      => 'user_file',
 					'type'    => 'file',
 					'title'   => 'Upload CSV/xml File',
 					'default' => null,
-					'accept'  => '.csv,.xml'  // Optional: specify accepted file types
-				],
-			],
+					'accept'  => '.csv,.xml',  // Optional: specify accepted file types
+				),
+			),
 			description: 'Test Description for this function.'
 		);
 
 		DevBench::add_function(
 			source: get_class( $this ),
 			function_name: 'test_no_params',
-			callback: [ $this, 'test_no_params' ],
-			params: [],
+			callback: array( $this, 'test_no_params' ),
+			params: array(),
 			description: 'Test Description for this function.'
 		);
 	}
@@ -60,7 +60,7 @@ final class TestClass {
 		error_log( print_r( $user_file, true ) );
 
 		// Option 1: Using SimpleXML (returns object that can be converted to array)
-		$csv_data = [];
+		$csv_data = array();
 
 		if ( ( $handle = fopen( $user_file, 'r' ) ) !== false ) {
 			// Get the first row as headers
@@ -74,7 +74,7 @@ final class TestClass {
 
 			fclose( $handle );
 		} else {
-			return [ 'error' => 'Failed to open CSV file' ];
+			return array( 'error' => 'Failed to open CSV file' );
 		}
 
 		return $csv_data;

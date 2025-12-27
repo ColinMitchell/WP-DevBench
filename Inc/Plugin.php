@@ -49,7 +49,7 @@ class Plugin {
 		// Testing Class
 		$this->test_class = ! isset( $this->test_class ) ? new TestClass() : $this->test_class;
 
-		add_action( 'plugins_loaded', [ $this, 'plugin_loaded' ] );
+		add_action( 'plugins_loaded', array( $this, 'plugin_loaded' ) );
 
 		/**
 		 * This allows any custom cache under 'wp-devbench' cache group to be global and accessible by all subsites.
@@ -60,7 +60,7 @@ class Plugin {
 		 * How to use per-site: wp_cache_add( sprintf( 'my_cache:%d', get_current_blog_id() ), $cache, 'wp-devbench' );
 		 */
 		if ( function_exists( 'wp_cache_add_global_groups' ) ) {
-			wp_cache_add_global_groups( [ 'wp-devbench' ] );
+			wp_cache_add_global_groups( array( 'wp-devbench' ) );
 		}
 	}
 

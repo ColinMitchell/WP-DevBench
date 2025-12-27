@@ -59,7 +59,7 @@ final class Starter {
 	 * @return void
 	 */
 	public function set_cache(): void {
-		$data = [];
+		$data = array();
 
 		// Set cache for current site
 		// wp_cache_set( sprintf( $this->cache_key_per_site, get_current_blog_id() ), $data, 'wp-devbench', $this->cache_expiration );

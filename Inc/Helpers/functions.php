@@ -1,7 +1,7 @@
 <?php
 declare( strict_types=1 );
 
-if( ! function_exists( 'devbench_add_function' ) ) :
+if ( ! function_exists( 'devbench_add_function' ) ) :
 	/**
 	 * Global wrapper function for registering DevBench functions.
 	 * Useful for users without Composer.
@@ -15,7 +15,7 @@ if( ! function_exists( 'devbench_add_function' ) ) :
 	 * @return void
 	 * @throws \Exception
 	 */
-	function devbench_add_function( string $source, string $function_name, callable $callback, array $params = [], string $description = '' ): void {
+	function devbench_add_function( string $source, string $function_name, callable $callback, array $params = array(), string $description = '' ): void {
 		WP_DevBench\Inc\Services\DevBench::add_function(
 			source: $source,
 			function_name: $function_name,

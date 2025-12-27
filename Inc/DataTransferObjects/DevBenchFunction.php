@@ -28,18 +28,18 @@ final class DevBenchFunction {
 		}
 
 		if ( ! empty( $this->params ) ) {
-			$schema = [
+			$schema = array(
 				'title'      => 'Function Params',
 				'type'       => 'object',
-				'properties' => [],
-			];
+				'properties' => array(),
+			);
 
 			foreach ( $this->params as $param ) {
-				$schema['properties'][ $param['id'] ] = [
+				$schema['properties'][ $param['id'] ] = array(
 					'type'    => $param['type'],
 					'title'   => $param['title'],
 					'default' => $param['default'] ?? null,
-				];
+				);
 
 				// Handle choices for select dropdowns
 				if ( ! empty( $param['choices'] ) ) {

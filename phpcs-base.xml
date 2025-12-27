@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<ruleset name="WP-DevBench Base PHPCS Configuration">
+  <description>Common PHPCS settings, exclusions, and file paths.</description>
+
+  <arg name="extensions" value="php"/>
+  <arg name="colors"/>
+  <arg name="report" value="full"/>
+  <arg value="ns"/> <file>.</file>
+  <file>./</file>
+
+  <exclude-pattern>*/vendor/*</exclude-pattern>
+  <exclude-pattern>*/node_modules/*</exclude-pattern>
+  <exclude-pattern>*/build/*</exclude-pattern>
+  <exclude-pattern>*/tests/*</exclude-pattern>
+
+  <rule ref="Generic.Files.LineLength">
+    <properties>
+      <property name="lineLimit" value="1000"/>
+      <property name="absoluteLineLimit" value="0"/>
+    </properties>
+  </rule>
+
+  <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+  <rule ref="Generic.Commenting.Todo"/>
+
+</ruleset>

@@ -11,10 +11,10 @@ use WP_DevBench\Inc\DataTransferObjects\DevBenchFunction;
 final class DevBench {
 
 	/** @var DevBenchFunction[] $functions */
-	private static array $functions = [];
+	private static array $functions = array();
 
 	public function __construct() {
-		add_action( 'init', [ $this, 'init' ], 20 );
+		add_action( 'init', array( $this, 'init' ), 20 );
 	}
 
 	public function init(): void {
@@ -33,7 +33,7 @@ final class DevBench {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public static function add_function( string $source, string $function_name, callable $callback, array $params = [], string $description = '' ): void {
+	public static function add_function( string $source, string $function_name, callable $callback, array $params = array(), string $description = '' ): void {
 		$key = sanitize_title( $source . $function_name );
 
 		if ( isset( self::$functions[ $key ] ) ) {
@@ -73,7 +73,7 @@ final class DevBench {
 	 * Execute a sandbox function by name.
 	 *
 	 * @param string $function_name
-	 * @param array $param_data
+	 * @param array  $param_data
 	 * @param string $username
 	 *
 	 * @return string|bool|\WP_Error
@@ -82,7 +82,7 @@ final class DevBench {
 		$functions = $this->get_functions();
 
 		if ( empty( $functions ) ) {
-			return new WP_Error(
+			return new \WP_Error(
 				'no_functions',
 				'No sandbox functions registered.'
 			);
@@ -91,7 +91,7 @@ final class DevBench {
 		$sandbox_function = $this->find_function( $function_name, $functions );
 
 		if ( ! $sandbox_function ) {
-			return new WP_Error(
+			return new \WP_Error(
 				'function_not_found',
 				sprintf( 'Could not find function: %s', $function_name )
 			);
@@ -110,7 +110,7 @@ final class DevBench {
 	/**
 	 * Find a function by name.
 	 *
-	 * @param string              $function_name
+	 * @param string             $function_name
 	 * @param DevBenchFunction[] $functions
 	 *
 	 * @return DevBenchFunction|null
@@ -140,7 +140,7 @@ final class DevBench {
 			return new \WP_Error(
 				'user_not_found',
 				'User not found or not authorized.',
-				[ 'status' => 401 ]
+				array( 'status' => 401 )
 			);
 		}
 
@@ -155,7 +155,7 @@ final class DevBench {
 	 * Execute a sandbox function with error handling.
 	 *
 	 * @param DevBenchFunction $sandbox_function
-	 * @param array $param_data
+	 * @param array            $param_data
 	 *
 	 * @return string|\WP_Error
 	 */
@@ -166,7 +166,7 @@ final class DevBench {
 		$callback = $sandbox_function->callback;
 
 		// Add custom error handler
-		set_error_handler( [ $this, 'error_handler' ] );
+		set_error_handler( array( $this, 'error_handler' ) );
 
 		try {
 			error_log( '🚀 DevBench: Executing → ' . $function_name );
@@ -185,7 +185,7 @@ final class DevBench {
 			return new \WP_Error(
 				'execution_error',
 				sprintf( 'Error executing %s: %s', $function_name, $e->getMessage() ),
-				[ 'status' => 200 ]
+				array( 'status' => 200 )
 			);
 		} finally {
 			restore_error_handler();
@@ -256,7 +256,7 @@ final class DevBench {
 	 * @return bool
 	 */
 	public function error_handler( int $errno, string $errstr, string $errfile, int $errline ): bool {
-		$error_types = [
+		$error_types = array(
 			E_ERROR             => '💀 Fatal Error',
 			E_WARNING           => '⚠️  Warning',
 			E_PARSE             => '📝 Parse Error',
@@ -272,7 +272,7 @@ final class DevBench {
 			E_RECOVERABLE_ERROR => '🔄 Recoverable Error',
 			E_DEPRECATED        => '📅 Deprecated',
 			E_USER_DEPRECATED   => '📅 User Deprecated',
-		];
+		);
 
 		$error_type = $error_types[ $errno ] ?? '❓ Unknown Error';
 		$border     = str_repeat( '─', 60 );
