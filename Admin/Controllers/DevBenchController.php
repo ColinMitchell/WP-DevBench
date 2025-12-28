@@ -4,13 +4,16 @@ declare( strict_types=1 );
 namespace WP_DevBench\Admin\Controllers;
 
 use WP_DevBench\Inc\DataTransferObjects\DevBenchFunctionResult;
-use WP_DevBench\Inc\Services\DevBench as DevBenchService;
+use WP_DevBench\Inc\Services\DevBenchService as DevBenchService;
 
 /**
  * Controller for handling DevBench REST API requests.
  */
-final class DevBench {
+final class DevBenchController {
 
+	/**
+	 * @var DevBenchService
+	 */
 	private DevBenchService $service;
 
 	public function __construct( DevBenchService $service ) {
@@ -31,9 +34,9 @@ final class DevBench {
 	 * Execute a DevBench function.
 	 * Endpoint: POST /wp-json/wp-devbench/v1/functions/run
 	 *
-	 * @param string $function_name
+	 * @param string     $function_name
 	 * @param array|null $param_data
-	 * @param string $username
+	 * @param string     $username
 	 *
 	 * @return DevBenchFunctionResult
 	 */
@@ -78,8 +81,8 @@ final class DevBench {
 		return new DevBenchFunctionResult(
 			success: true,
 			result: $result,
-			error: "",
-			code: "",
+			error: '',
+			code: '',
 			status_code: 200,
 			debug_log: null
 		);
@@ -100,7 +103,7 @@ final class DevBench {
 		}
 
 		$file_content = file_get_contents( $debug_log_path );
-		if (  empty( $file_content ) ) {
+		if ( empty( $file_content ) ) {
 			return null;
 		}
 

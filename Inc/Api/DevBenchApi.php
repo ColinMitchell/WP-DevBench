@@ -3,11 +3,10 @@ declare( strict_types=1 );
 
 namespace WP_DevBench\Inc\Api;
 
-use WP_DevBench\Admin\Controllers\DevBench as DevBenchController;
-use WP_DevBench\Inc\DataTransferObjects\DevBenchFunctionResult;
+use WP_DevBench\Admin\Controllers\DevBenchController as DevBenchController;
 use WP_DevBench\Inc\Interfaces\ApiInterface;
 use WP_DevBench\Inc\Plugin;
-use WP_DevBench\Inc\Services\DevBench as DevBenchService;
+use WP_DevBench\Inc\Services\DevBenchService as DevBenchService;
 
 /**
  * DevBench API route registration and initialization.
@@ -31,40 +30,40 @@ final class DevBenchApi extends Api implements ApiInterface {
 	#[\Override]
 	public function register_routes(): void {
 		// GET/POST: /wp-json/wp-devbench/v1/devbench/functions
-		register_rest_route( parent::DEVBENCH_ENDPOINT, '/devbench/functions', [
-			[
+		register_rest_route( parent::DEVBENCH_ENDPOINT, '/devbench/functions', array(
+			array(
 				'methods'             => 'GET',
-				'callback'            => [ $this, 'get' ],
-				'permission_callback' => [ $this, 'authorize' ],
-				'schema'              => [ $this, 'get_functions_schema' ],
-			],
-			[
+				'callback'            => array( $this, 'get' ),
+				'permission_callback' => array( $this, 'authorize' ),
+				'schema'              => array( $this, 'get_functions_schema' ),
+			),
+			array(
 				'methods'             => 'POST',
-				'callback'            => [ $this, 'run' ],
-				'permission_callback' => [ $this, 'authorize' ],
-				'args'                => [
-					'funcName'  => [
+				'callback'            => array( $this, 'run' ),
+				'permission_callback' => array( $this, 'authorize' ),
+				'args'                => array(
+					'funcName'  => array(
 						'required'          => true,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 						'description'       => 'Name of the function to execute',
-					],
-					'paramData' => [
+					),
+					'paramData' => array(
 						'required'    => false,
 						'type'        => 'object',
-						'default'     => [],
+						'default'     => array(),
 						'description' => 'Parameters to pass to the function',
-					],
-					'username'  => [
+					),
+					'username'  => array(
 						'required'          => true,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_user',
 						'description'       => 'Username to authenticate as',
-					],
-				],
-				'schema'              => [ $this, 'run_function_schema' ],
-			],
-		] );
+					),
+				),
+				'schema'              => array( $this, 'run_function_schema' ),
+			),
+		) );
 	}
 
 	/**
@@ -73,52 +72,52 @@ final class DevBenchApi extends Api implements ApiInterface {
 	 * @return array OpenAPI schema definition
 	 */
 	public function get_functions_schema(): array {
-		return [
+		return array(
 			'$schema'     => 'http://json-schema.org/draft-04/schema#',
 			'title'       => 'DevBench Functions List',
 			'description' => 'Retrieves a list of available DevBench functions',
 			'type'        => 'object',
-			'properties'  => [
-				'functions' => [
+			'properties'  => array(
+				'functions' => array(
 					'description' => 'Array of available functions',
 					'type'        => 'array',
-					'items'       => [
+					'items'       => array(
 						'type'       => 'object',
-						'properties' => [
-							'name'        => [
+						'properties' => array(
+							'name'        => array(
 								'type'        => 'string',
 								'description' => 'Function name',
-							],
-							'description' => [
+							),
+							'description' => array(
 								'type'        => 'string',
 								'description' => 'Function description',
-							],
-							'parameters'  => [
+							),
+							'parameters'  => array(
 								'type'        => 'array',
 								'description' => 'Function parameters',
-								'items'       => [
+								'items'       => array(
 									'type'       => 'object',
-									'properties' => [
-										'name'     => [
+									'properties' => array(
+										'name'     => array(
 											'type'        => 'string',
 											'description' => 'Parameter name',
-										],
-										'type'     => [
+										),
+										'type'     => array(
 											'type'        => 'string',
 											'description' => 'Parameter type',
-										],
-										'required' => [
+										),
+										'required' => array(
 											'type'        => 'boolean',
 											'description' => 'Whether parameter is required',
-										],
-									],
-								],
-							],
-						],
-					],
-				],
-			],
-		];
+										),
+									),
+								),
+							),
+						),
+					),
+				),
+			),
+		);
 	}
 
 	/**
@@ -127,48 +126,48 @@ final class DevBenchApi extends Api implements ApiInterface {
 	 * @return array OpenAPI schema definition
 	 */
 	public function run_function_schema(): array {
-		return [
+		return array(
 			'$schema'     => 'http://json-schema.org/draft-04/schema#',
 			'title'       => 'DevBench Function Execution',
 			'description' => 'Executes a DevBench function and returns the result',
 			'type'        => 'object',
-			'properties'  => [
-				'success'     => [
+			'properties'  => array(
+				'success'     => array(
 					'description' => 'Whether the function execution was successful',
 					'type'        => 'boolean',
 					'readonly'    => true,
-				],
-				'result'      => [
+				),
+				'result'      => array(
 					'description' => 'Function execution result data',
-					'type'        => [ 'object', 'array', 'string', 'number', 'boolean', 'null' ],
+					'type'        => array( 'object', 'array', 'string', 'number', 'boolean', 'null' ),
 					'readonly'    => true,
-				],
-				'error'       => [
+				),
+				'error'       => array(
 					'description' => 'Error message if execution failed',
-					'type'        => [ 'string', 'null' ],
+					'type'        => array( 'string', 'null' ),
 					'readonly'    => true,
-				],
-				'code'        => [
+				),
+				'code'        => array(
 					'description' => 'Error code if execution failed',
-					'type'        => [ 'string', 'null' ],
+					'type'        => array( 'string', 'null' ),
 					'readonly'    => true,
-				],
-				'status_code' => [
+				),
+				'status_code' => array(
 					'description' => 'HTTP status code',
 					'type'        => 'integer',
 					'readonly'    => true,
-				],
-				'debug_log'   => [
+				),
+				'debug_log'   => array(
 					'description' => 'Debug log entries from execution',
 					'type'        => 'array',
-					'items'       => [
+					'items'       => array(
 						'type' => 'string',
-					],
+					),
 					'readonly'    => true,
-				],
-			],
-			'required'    => [ 'success', 'status_code' ],
-		];
+				),
+			),
+			'required'    => array( 'success', 'status_code' ),
+		);
 	}
 
 	/**
@@ -180,7 +179,7 @@ final class DevBenchApi extends Api implements ApiInterface {
 	 */
 	public function run( \WP_REST_Request $request ): \WP_Error|\WP_REST_Response {
 		$function_name = $request->get_param( 'funcName' );
-		$param_data    = $request->get_param( 'paramData' ) ?? [];
+		$param_data    = $request->get_param( 'paramData' ) ?? array();
 		$username      = $request->get_param( 'username' );
 
 		if ( ! $function_name ) {
@@ -193,14 +192,14 @@ final class DevBenchApi extends Api implements ApiInterface {
 
 		$data = $this->devbench_controller->run( $function_name, $param_data, $username );
 
-		return new \WP_REST_Response( [
+		return new \WP_REST_Response( array(
 			'success'     => $data->success,
 			'result'      => $data->result,
 			'error'       => $data->error,
 			'code'        => $data->code,
 			'status_code' => $data->status_code,
 			'debug_log'   => $data->debug_log,
-		], $data->status_code );
+		), $data->status_code );
 	}
 
 	/**

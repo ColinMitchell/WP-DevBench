@@ -15,7 +15,7 @@ final class Admin {
 	private DevBenchPage $dev_bench_page;
 
 	public function __construct( protected Plugin $plugin ) {
-		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'init', array( $this, 'init' ) );
 	}
 
 	public function init(): void {

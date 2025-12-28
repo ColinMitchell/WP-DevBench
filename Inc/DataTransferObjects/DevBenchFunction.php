@@ -9,18 +9,47 @@ use Exception;
  * DTO - DevBenchFunction
  */
 final class DevBenchFunction {
+	/**
+	 * Source identifier.
+	 *
+	 * @var string
+	 */
 	public string $source;
-	public string $funcName;
+
+	/**
+	 * Function name.
+	 *
+	 * @var string
+	 */
+	public string $funcName; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
+
+	/**
+	 * Callable function reference.
+	 *
+	 * @var callable
+	 */
 	public $callback;
+
+	/**
+	 * Parameter schema or null.
+	 *
+	 * @var array|null
+	 */
 	public ?array $params;
+
+	/**
+	 * Description of function.
+	 *
+	 * @var string
+	 */
 	public string $description;
 
 	public function __construct( string $source, string $function_name, callable $callback, ?array $params = null, string $description = '' ) {
 		$this->source = $source;
-		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$this->funcName    = $function_name;
 		$this->callback    = $callback;
-		$this->params      = $params ?: null;
+		$this->params      = $params ? $params : null;
 		$this->description = $description;
 
 		if ( ! is_callable( $callback ) ) {
@@ -28,18 +57,18 @@ final class DevBenchFunction {
 		}
 
 		if ( ! empty( $this->params ) ) {
-			$schema = [
+			$schema = array(
 				'title'      => 'Function Params',
 				'type'       => 'object',
-				'properties' => [],
-			];
+				'properties' => array(),
+			);
 
 			foreach ( $this->params as $param ) {
-				$schema['properties'][ $param['id'] ] = [
+				$schema['properties'][ $param['id'] ] = array(
 					'type'    => $param['type'],
 					'title'   => $param['title'],
 					'default' => $param['default'] ?? null,
-				];
+				);
 
 				// Handle choices for select dropdowns
 				if ( ! empty( $param['choices'] ) ) {

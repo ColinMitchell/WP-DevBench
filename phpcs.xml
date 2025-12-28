@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<ruleset name="WP-DevBench Custom WordPress Coding Styles">
+
+  <rule ref="./phpcs-base.xml"/>
+
+  <rule ref="WordPress">
+    <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+    <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+    <exclude name="Squiz.Commenting.FileComment.Missing"/>
+    <exclude name="Squiz.Commenting.FunctionComment.Missing"/>
+    <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
+    <exclude name="WordPress.PHP.DisallowShortArraySyntax.Found"/>
+    <exclude name="Universal.Arrays.DisallowShortArraySyntax.Found"/>
+    <exclude name="Squiz.Arrays.ArrayDeclaration"/>
+    <exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
+    <exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments"/>
+    <exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine"/>
+    <exclude name="WordPress.PHP.YodaConditions.NotYoda"/>
+    <exclude name="Squiz.Commenting.BlockComment.NoEmptyLineBefore"/>
+    <exclude name="Squiz.Commenting.BlockComment.NoCapital"/>
+    <exclude name="Squiz.Commenting.BlockComment.CloserSameLine"/>
+    <exclude name="Squiz.Commenting.BlockComment.NoNewLine"/>
+    <exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
+    <exclude name="WordPress.WP.I18n.NoEmptyStrings"/>
+    <exclude name="WordPress.WP.I18n.MissingTranslatorsComment"/>
+    <exclude name="Universal.Operators.DisallowShortTernary.Found"/>
+    <exclude name="Squiz.Commenting.FunctionComment.EmptyThrows"/>
+    <exclude name="WordPress.PHP.DisallowShortTernary.Found"/>
+
+    <!--Deprecated-->
+    <exclude name="Generic.Functions.CallTimePassByReference"/>
+
+    <!--This one can be re-enabled.-->
+    <exclude name="Generic.Commenting.DocComment.MissingShort"/>
+    <exclude name="Squiz.Commenting.FunctionComment.MissingParamComment"/>
+    <exclude name="WordPress.Security.NonceVerification.Missing"/>
+
+    <!--This one changes CRLF to LF-->
+    <exclude name="Generic.Files.LineEndings"/>
+  </rule>
+
+<!--  <rule ref="WordPress-Docs"/>
+  <rule ref="WordPress-Extra" />-->
+
+
+  <!--<rule ref="WordPress.WP.I18n">
+    <properties>
+      <property name="wp-devbench" type="array">
+        <element value="wp-devbench"/>
+      </property>
+    </properties>
+  </rule>-->
+
+</ruleset>

@@ -26,9 +26,9 @@ class DevBenchPage {
 			$this->devbench_api = new DevBenchApi( $this->plugin );
 		}
 
-		add_action( 'admin_menu', [ $this, 'add_page' ] );
+		add_action( 'admin_menu', array( $this, 'add_page' ) );
 
-		add_action( 'admin_enqueue_scripts', [ $this, 'register_assets' ] );
+		add_action( 'admin_enqueue_scripts', array( $this, 'register_assets' ) );
 	}
 
 	/**
@@ -40,11 +40,11 @@ class DevBenchPage {
 	 */
 	public function register_assets( $hook ): void {
 
-		if( $hook !== "toplevel_page_wp-devbench" ) {
+		if ( $hook !== 'toplevel_page_wp-devbench' ) {
 			return;
 		}
 
-		$dependencies = [];
+		$dependencies = array();
 		$version      = WP_DEVBENCH_VERSION;
 
 		if ( ! isset( $_GET['page'] ) || ! str_starts_with( sanitize_text_field( wp_unslash( $_GET['page'] ) ), 'wp-devbench' ) ) {
@@ -92,7 +92,7 @@ class DevBenchPage {
 			menu_title: __( 'WP DevBench', 'wp-devbench-plugin' ),
 			capability: 'manage_options',
 			menu_slug: self::SCREEN,
-			callback: [ $this, 'render_page' ],
+			callback: array( $this, 'render_page' ),
 			icon_url: 'dashicons-superhero',
 			position: 100
 		);
@@ -137,14 +137,14 @@ class DevBenchPage {
 		wp_localize_script(
 			self::SCREEN,
 			'wpDevBench',
-			[
+			array(
 				'apiUrl'        => rest_url( 'wp-devbench/v1' ),
 				'baseApiUrl'    => untrailingslashit( rest_url() ),
 				'currentBlogId' => get_current_blog_id(),
 				'userName'      => $current_user->user_login,
 				'userRole'      => $user_role,
 				'nonce'         => wp_create_nonce( 'wp_rest' ),
-			]
+			)
 		);
 
 		echo '<div class="wp-devbench-plugin-wrap">';

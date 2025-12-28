@@ -16,8 +16,8 @@ abstract class Api extends \WP_REST_Controller {
 	public const string DEVBENCH_ENDPOINT = 'wp-devbench/v1';
 
 	public function __construct() {
-		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
-		add_filter( 'rest_authentication_errors', [ $this, 'disable_cookie_auth' ], 99 );
+		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_filter( 'rest_authentication_errors', array( $this, 'disable_cookie_auth' ), 99 );
 	}
 
 	/**
@@ -58,7 +58,7 @@ abstract class Api extends \WP_REST_Controller {
 			return new \WP_Error(
 				'rest_invalid_nonce',
 				'Nonce verification failed.',
-				[ 'status' => 403 ]
+				array( 'status' => 403 )
 			);
 		}
 
