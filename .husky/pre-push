@@ -1,4 +1,19 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
 
-docker-compose exec -T webserver bash -c "cd web/app/plugins/wp-devbench && composer test;"
+set -eu
+
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+CYAN="\033[0;36m"
+RESET="\033[0m"
+
+PLUGIN_PATH="web/app/plugins/wp-devbench"
+DOCKER_CMD="docker-compose exec -T webserver bash -c"
+
+trap 'echo -e "${RED}❌ Pre-push checks failed. Push aborted.${RESET}"' ERR
+
+echo -e "${CYAN}🚀 Running full test suite before push...${RESET}"
+
+$DOCKER_CMD "cd $PLUGIN_PATH && composer test"
+
+echo -e "${GREEN}✅ All checks passed. Safe to push.${RESET}"
