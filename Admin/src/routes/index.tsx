@@ -1,42 +1,37 @@
-import Header from "@components/global/Header";
-import Sidebar from "@components/global/Sidebar";
-import {HashRouter, Route, Routes, useLocation} from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import DevBench from "@pages/DevBench";
-import {Toaster} from "@components/ui/toaster";
+import { Toaster } from "@components/ui/toaster";
 import React from "react";
 
-import {isAuthorized} from "@utils/authUtils";
-import {cn} from "@lib/utils";
+import { isAuthorized } from "@utils/authUtils";
 import RouteBasedTitle from "@components/global/RouteBasedTitle";
-import {ThemeProvider, useTheme} from "@/contexts/ThemeContext";
+import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 
 export default function IndexRouter() {
 	return (
-        <ThemeProvider>
-            <HashRouter>
-                <RouteBasedTitle />
-                <InnerContent />
-            </HashRouter>
-        </ThemeProvider>
-	)
+		<ThemeProvider>
+			<HashRouter>
+				<RouteBasedTitle />
+				<InnerContent />
+			</HashRouter>
+		</ThemeProvider>
+	);
 }
 
 /**
  * Dev Note: I had to create this InnerContent to make the router useLocation() work within the HashRouter.
- * @constructor
+ * @class
  */
 function InnerContent() {
-    const { isDark } = useTheme();
+	const { isDark } = useTheme();
 
 	return (
-        <div className={isDark ? "dark" : "light"} style={{colorScheme: isDark ? 'dark' : 'light'}}>
+		<div className={isDark ? "dark" : "light"} style={{ colorScheme: isDark ? "dark" : "light" }}>
 			{/*<Header/>*/}
-            <main className="w-full pt-0">
-                <Routes>
-                    {isAuthorized(['administrator']) && <Route path="/" element={<DevBench/>}/>}
-                </Routes>
-            </main>
-			<Toaster/>
+			<main className="w-full pt-0">
+				<Routes>{isAuthorized(["administrator"]) && <Route path="/" element={<DevBench />} />}</Routes>
+			</main>
+			<Toaster />
 		</div>
-	)
+	);
 }

@@ -70,13 +70,13 @@ class DevBenchPage {
 
 		wp_register_script( self::SCREEN, plugins_url( 'build/devbench.js', WP_DEVBENCH_MAIN_FILE ), $dependencies, $version );
 
-		if ( file_exists( WP_DEVBENCH_DIR . 'build/dark-mode.asset.php' ) ) {
-			$asset_file   = include WP_DEVBENCH_DIR . 'build/dark-mode.asset.php';
+		if ( file_exists( WP_DEVBENCH_DIR . 'build/dark-mode-wp-sync.asset.php' ) ) {
+			$asset_file   = include WP_DEVBENCH_DIR . 'build/dark-mode-wp-sync.asset.php';
 			$dependencies = $asset_file['dependencies'];
 			$version      = $asset_file['version'];
 		}
 
-		wp_register_script( self::SCREEN . 'dark-mode', plugins_url( 'build/dark-mode.js', WP_DEVBENCH_MAIN_FILE ), $dependencies, $version );
+		wp_register_script( self::SCREEN . 'dark-mode-wp-sync', plugins_url( 'build/dark-mode-wp-sync.js', WP_DEVBENCH_MAIN_FILE ), $dependencies, $version );
 	}
 
 	/**
@@ -107,7 +107,6 @@ class DevBenchPage {
 	 * @since 1.0.0
 	 */
 	public function add_menu_page( array $links ): array {
-
 		// Add link as the first plugin action link.
 		$devbench_link = sprintf(
 			'<a href="%s">%s</a>',
@@ -128,7 +127,7 @@ class DevBenchPage {
 	public function render_page(): void {
 		wp_enqueue_script( self::SCREEN );
 
-		wp_enqueue_script( self::SCREEN . 'dark-mode' );
+		wp_enqueue_script( self::SCREEN . 'dark-mode-wp-sync' );
 
 		$current_user = wp_get_current_user();
 		$user_role    = ! empty( $current_user->roles ) ? $current_user->roles[0] : 'wp_devbench_viewer';

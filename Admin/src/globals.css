@@ -6,6 +6,10 @@
 	@apply bg-slate-950;
 }
 
+#wpwrap.dark #adminmenuback {
+	z-index: 100;
+}
+
 #wp-devbench-dashboard {
 	@layer base {
 		:root {
