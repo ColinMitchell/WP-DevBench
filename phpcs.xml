@@ -25,6 +25,7 @@
     <exclude name="WordPress.WP.I18n.MissingTranslatorsComment"/>
     <exclude name="Universal.Operators.DisallowShortTernary.Found"/>
     <exclude name="Squiz.Commenting.FunctionComment.EmptyThrows"/>
+    <exclude name="WordPress.PHP.DisallowShortTernary.Found"/>
 
     <!--Deprecated-->
     <exclude name="Generic.Functions.CallTimePassByReference"/>

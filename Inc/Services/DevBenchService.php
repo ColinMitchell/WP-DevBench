@@ -8,17 +8,12 @@ use WP_DevBench\Inc\DataTransferObjects\DevBenchFunction;
 /**
  * Service for managing and executing sandbox functions.
  */
-final class DevBench {
+final class DevBenchService {
 
 	/** @var DevBenchFunction[] $functions */
 	private static array $functions = array();
 
 	public function __construct() {
-		add_action( 'init', array( $this, 'init' ), 20 );
-	}
-
-	public function init(): void {
-		// Hook into WordPress init if needed for setup
 	}
 
 	/**
@@ -78,7 +73,7 @@ final class DevBench {
 	 *
 	 * @return string|bool|\WP_Error
 	 */
-	public function execute_function( string $function_name, array $param_data, string $username ): string|bool|WP_Error {
+	public function execute_function( string $function_name, array $param_data, string $username ): string|bool|\WP_Error {
 		$functions = $this->get_functions();
 
 		if ( empty( $functions ) ) {

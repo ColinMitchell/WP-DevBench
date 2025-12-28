@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+. "$(dirname "$0")/_/husky.sh"
+
+docker-compose exec -T webserver bash -c "cd web/app/plugins/wp-devbench && composer format;"
+docker-compose exec -T webserver bash -c "cd web/app/plugins/wp-devbench && composer test;"

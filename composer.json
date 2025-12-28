@@ -50,11 +50,10 @@
         }
     },
     "scripts": {
-        "lint": "phpcs",
-        "format": "./vendor/bin/phpcbf -p --standard=phpcs.xml",
+        "format": "vendor/bin/phpcbf -p --standard=phpcs.xml",
 		"phpcs": "vendor/bin/phpcs",
 		"pest": "vendor/bin/pest",
-        "phpstan": "phpstan analyse -c phpstan.neon --memory-limit=2048M",
+        "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=2048M",
 		"test": [
 			"@phpstan",
 			"@phpcs",

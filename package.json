@@ -21,7 +21,8 @@
 		"env": "wp-env",
 		"prezip": "npm-run-all prezip:*",
 		"prezip:js": "npm run build",
-		"zip": "npm run prezip && node makeZip.js"
+		"zip": "npm run prezip && node makeZip.js",
+		"prepare": "husky"
 	},
 	"devDependencies": {
 		"@types/react": "^18.3.1",
@@ -31,6 +32,8 @@
 		"@wordpress/scripts": "^30.20.0",
 		"autoprefixer": "^10.4.21",
 		"css-loader": "^7.1.2",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.2.7",
 		"mini-css-extract-plugin": "^2.9.2",
 		"postcss-important": "^0.3.0",
 		"postcss-loader": "^8.1.1",
@@ -86,5 +89,11 @@
 		"tailwindcss-animate": "^1.0.7",
 		"uuid": "^11.1.0",
 		"wretch": "^2.11.0"
+	},
+	"lint-staged": {
+		"*.php": [
+			"composer phpstan",
+			"composer phpcs"
+		]
 	}
 }

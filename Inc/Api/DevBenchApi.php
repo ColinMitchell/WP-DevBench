@@ -3,11 +3,10 @@ declare( strict_types=1 );
 
 namespace WP_DevBench\Inc\Api;
 
-use WP_DevBench\Admin\Controllers\DevBench as DevBenchController;
-use WP_DevBench\Inc\DataTransferObjects\DevBenchFunctionResult;
+use WP_DevBench\Admin\Controllers\DevBenchController as DevBenchController;
 use WP_DevBench\Inc\Interfaces\ApiInterface;
 use WP_DevBench\Inc\Plugin;
-use WP_DevBench\Inc\Services\DevBench as DevBenchService;
+use WP_DevBench\Inc\Services\DevBenchService as DevBenchService;
 
 /**
  * DevBench API route registration and initialization.

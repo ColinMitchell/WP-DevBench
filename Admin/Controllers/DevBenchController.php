@@ -4,13 +4,16 @@ declare( strict_types=1 );
 namespace WP_DevBench\Admin\Controllers;
 
 use WP_DevBench\Inc\DataTransferObjects\DevBenchFunctionResult;
-use WP_DevBench\Inc\Services\DevBench as DevBenchService;
+use WP_DevBench\Inc\Services\DevBenchService as DevBenchService;
 
 /**
  * Controller for handling DevBench REST API requests.
  */
-final class DevBench {
+final class DevBenchController {
 
+	/**
+	 * @var DevBenchService
+	 */
 	private DevBenchService $service;
 
 	public function __construct( DevBenchService $service ) {

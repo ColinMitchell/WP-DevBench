@@ -3,7 +3,7 @@ declare( strict_types=1 );
 
 namespace WP_DevBench\Inc;
 
-use WP_DevBench\Inc\Services\DevBench;
+use WP_DevBench\Inc\Services\DevBenchService;
 
 /**
  * Testing Class
@@ -14,7 +14,7 @@ final class TestClass {
 	}
 
 	public function init(): void {
-		DevBench::add_function(
+		DevBenchService::add_function(
 			source: get_class( $this ),
 			function_name: 'test',
 			callback: array( $this, 'test' ),
@@ -47,7 +47,7 @@ final class TestClass {
 			description: 'Test Description for this function.'
 		);
 
-		DevBench::add_function(
+		DevBenchService::add_function(
 			source: get_class( $this ),
 			function_name: 'test_no_params',
 			callback: array( $this, 'test_no_params' ),
@@ -56,28 +56,21 @@ final class TestClass {
 		);
 	}
 
+	/**
+	 * Test DevBench Function with Params
+	 */
 	public function test( $param_one, $param_two, $param_three, $user_file ): mixed {
+		error_log( print_r( $param_one, true ) );
+		error_log( print_r( $param_two, true ) );
+		error_log( print_r( $param_three, true ) );
 		error_log( print_r( $user_file, true ) );
 
-		// Option 1: Using SimpleXML (returns object that can be converted to array)
-		$csv_data = array();
-
-		if ( ( $handle = fopen( $user_file, 'r' ) ) !== false ) {
-			// Get the first row as headers
-			$headers = fgetcsv( $handle );
-
-			// Read the rest of the rows
-			while ( ( $row = fgetcsv( $handle ) ) !== false ) {
-				// Combine headers with row data to create associative array
-				$csv_data[] = array_combine( $headers, $row );
-			}
-
-			fclose( $handle );
-		} else {
-			return array( 'error' => 'Failed to open CSV file' );
-		}
-
-		return $csv_data;
+		return array(
+			$param_one,
+			$param_two,
+			$param_three,
+			$user_file,
+		);
 	}
 
 	public function test_no_params(): string {
