@@ -1,15 +1,15 @@
-import {RJSFSchema} from "@rjsf/utils";
+import { RJSFSchema } from "@rjsf/utils";
 
 declare global {
-    interface DevBenchInterface {
-        apiDocsUrl: string;
-        apiUrl: string;
-        baseApiUrl: string;
-        currentBlogId: number;
-        userName: string;
-        userRole: string;
-        nonce: string;
-    }
+	interface DevBenchInterface {
+		apiDocsUrl: string;
+		apiUrl: string;
+		baseApiUrl: string;
+		currentBlogId: number;
+		userName: string;
+		userRole: string;
+		nonce: string;
+	}
 
 	interface Window {
 		wpDevBench: DevBenchInterface;
@@ -35,4 +35,4 @@ interface FuncInterface {
 	description?: string;
 }
 
-export {FuncInterface, NavItem};
+export { FuncInterface, NavItem };

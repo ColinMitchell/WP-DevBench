@@ -1,0 +1,22 @@
+{
+  "extends": ["plugin:@wordpress/eslint-plugin/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "react/no-unescaped-entities": "off",
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-nested-ternary": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "parser": "@typescript-eslint/parser"
+    }
+  ]
+}

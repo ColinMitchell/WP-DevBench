@@ -1,10 +1,10 @@
-import {ValidatorType} from "@rjsf/utils";
+import { ValidatorType } from "@rjsf/utils";
 
 /**
  * This is an override to disable the validator that comes with react-jsonschema-forms. I ran into WebPack errors with it.
  */
 export const noValidator: ValidatorType<any, any, any> = {
-	validateFormData: (formData: any): { valid: boolean; errors: any[]; errorSchema: {} } => {
+	validateFormData: (): { valid: boolean; errors: any[]; errorSchema: {} } => {
 		// Return an object with errors, valid status, and an empty error schema
 		return {
 			errors: [],
@@ -12,7 +12,7 @@ export const noValidator: ValidatorType<any, any, any> = {
 			errorSchema: {}, // Add errorSchema here
 		};
 	},
-	toErrorList: (errors: any) => {
+	toErrorList: () => {
 		// Convert errors to an empty list
 		return [];
 	},
@@ -20,7 +20,7 @@ export const noValidator: ValidatorType<any, any, any> = {
 		// Return true as no errors mean valid
 		return errors.length === 0;
 	},
-	rawValidation: (formData: any) => {
+	rawValidation: () => {
 		// Return an object with an empty errors array and errorSchema
 		return {
 			errors: [],
