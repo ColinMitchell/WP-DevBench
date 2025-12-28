@@ -8,6 +8,20 @@ Put Your Description Here
 - I had self-signed certificate issues when doing npm update. This fixed it running from plugin folder. `npm config set cafile "../../../../config/ssl/cert.pem"`
 
 ## Developopment
+```aiignore
+{
+"repositories": [
+{
+"type": "vcs",
+"url": "https://github.com/ColinMitchell/wp-devbench"
+}
+],
+"require": {
+"colinmitchell/wp-devbench": "^1.0"
+}
+}
+```
+
 
 - Clone
 	- git@github.com:GITHUB_ORG/GITHUB_REPO.git

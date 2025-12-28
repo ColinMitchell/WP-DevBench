@@ -10,9 +10,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {useTheme} from "@/contexts/ThemeContext";
 
 export default function DocsModal() {
     const [open, setOpen] = useState(false);
+    const { isDark } = useTheme();
 
     return (
         <>
@@ -20,14 +22,16 @@ export default function DocsModal() {
                 variant="ghost"
                 onClick={() => setOpen(true)}
                 title="Documentation"
-                className="gap-2 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="gap-2 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
             >
-                <HelpCircle className="w-4 h-4" />
+                <HelpCircle className="h-4 w-4" />
                 <span className="hidden sm:inline">Docs</span>
             </Button>
 
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700">
+                <DialogContent
+                    className={`max-h-[85vh] max-w-4xl overflow-y-auto ${isDark ? 'dark border-slate-700 bg-slate-900 text-slate-100' : 'border border-slate-200 bg-white text-slate-900'}`}
+                >
                     <DialogHeader>
                         <DialogTitle className="dark:text-slate-100">WP-DevBench Documentation</DialogTitle>
                         <DialogDescription className="dark:text-slate-400">
@@ -320,19 +324,6 @@ final class MyPlugin {
     description: 'Query posts by status and count'
 );`}
                                 </pre>
-                            </div>
-
-                            <div className="bg-green-50 dark:bg-slate-800 border border-green-200 dark:border-slate-700 rounded p-3 mt-4">
-                                <p className="text-xs font-semibold text-green-900 dark:text-green-300 mb-1">✓ BEST PRACTICES</p>
-                                <ul className="text-xs text-green-800 dark:text-green-200 space-y-1">
-                                    <li>• Register functions on the <code className="bg-white dark:bg-slate-700 dark:text-slate-200 px-1 py-0.5 rounded text-xs">init</code> hook or in plugin load</li>
-                                    <li>• Use descriptive function and parameter names</li>
-                                    <li>• Always include a clear description for end users</li>
-                                    <li>• Handle errors gracefully and return meaningful data</li>
-                                    <li>• Test functions locally before adding to DevBench</li>
-                                    <li>• Use global functions for non-Composer setups</li>
-                                    <li>• Use action hooks in mu-plugins for maximum compatibility</li>
-                                </ul>
                             </div>
                         </TabsContent>
                     </Tabs>
