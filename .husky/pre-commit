@@ -1,6 +1,19 @@
 #!/bin/sh
-set -e
-. "$(dirname "$0")/_/husky.sh"
 
-docker-compose exec -T webserver bash -c "cd web/app/plugins/wp-devbench && composer format;"
-docker-compose exec -T webserver bash -c "cd web/app/plugins/wp-devbench && composer test;"
+set -eu
+
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+CYAN="\033[0;36m"
+RESET="\033[0m"
+
+PLUGIN_PATH="web/app/plugins/wp-devbench"
+DOCKER_CMD="docker-compose exec -T webserver bash -c"
+
+echo -e "${CYAN}🎯 Running PHP Beautifier (phpcbf)...${RESET}"
+$DOCKER_CMD "cd $PLUGIN_PATH && composer format"
+
+echo -e "${CYAN}🎯 Running PHPStan, PHPCS, and PestPHP tests...${RESET}"
+$DOCKER_CMD "cd $PLUGIN_PATH && composer test"
+
+echo -e "${GREEN}✅ Pre-commit checks passed!${RESET}"
