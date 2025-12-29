@@ -4,7 +4,7 @@
 	"description": "A developer sandbox for WordPress that lets you run custom PHP functions, test code snippets, and debug outputs directly in the admin dashboard.",
 	"author": "ColinMitchell",
 	"license": "GPL-2.0-or-later",
-	"main": "build/index.js",
+	"main": "build/devbench.js",
 	"scripts": {
 		"build": "wp-scripts build",
 		"dist": "npm run build && composer install --no-dev --optimize-autoloader",
@@ -17,8 +17,12 @@
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start",
-		"env": "wp-env",
-		"prepare": "husky"
+		"prepare": "husky",
+		"phpcbf": "./docker-composer.sh format",
+		"phpstan": "./docker-composer.sh phpstan",
+		"phpcs": "./docker-composer.sh phpcs",
+		"pest": "./docker-composer.sh pest",
+		"test": "./docker-composer.sh test"
 	},
 	"devDependencies": {
 		"@types/react": "^18.3.1",
@@ -88,9 +92,16 @@
 		"wretch": "^2.11.0"
 	},
 	"lint-staged": {
+		"concurrent": false,
 		"*.php": [
-			"composer phpstan",
-			"composer phpcs"
+			"./docker-composer.sh phpcbf",
+			"./docker-composer.sh phpcs"
+		],
+		"*.{js,jsx,ts,tsx}": [
+			"wp-scripts lint-js --fix"
+		],
+		"*.{css,scss}": [
+			"wp-scripts lint-style --fix"
 		]
 	}
 }
