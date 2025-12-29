@@ -3,6 +3,8 @@
 
 A powerful developer sandbox plugin for WordPress that lets you run custom PHP functions, test code snippets, and debug outputs directly in the WordPress admin dashboard.
 
+<img width="2274" height="1326" alt="image" src="https://github.com/user-attachments/assets/f3f5544e-9e2e-4052-b5ac-4d3d2509a285" />
+
 ## Requirements
 
 - **WordPress:** 6.1 or higher
