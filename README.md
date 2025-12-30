@@ -35,6 +35,11 @@ Once activated, you'll see a new **WP-DevBench** menu item in the WordPress admi
 - **Debug** - View detailed output, errors, and debugging information
 - **Inspect Data** - Use var_dump, print_r, and other debugging functions to inspect data
 
+### Error Debug Results
+
+<img width="1381" height="757" alt="error-debug-results" src="https://github.com/user-attachments/assets/433c77fe-bd00-468d-9018-989ccede4ccb" />
+
+
 ### Getting Started
 
 1. Navigate to **WP-DevBench** in your admin dashboard
