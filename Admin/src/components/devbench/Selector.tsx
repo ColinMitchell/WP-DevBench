@@ -4,7 +4,7 @@ import { Button } from "@components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@components/ui/command";
 import { ArrowUpDown, Loader2 } from "lucide-react";
 import { FuncInterface } from "@/types/types";
-import {useTheme} from "@/contexts/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export interface selectorProps {
 	functions: FuncInterface[] | null;
@@ -15,7 +15,7 @@ export interface selectorProps {
 
 export default function Selector({ functions, selectedFunction, setSelectedFunction, onClearResults }: selectorProps) {
 	const [open, setOpen] = React.useState(false);
-    const { isDark } = useTheme();
+	const { isDark } = useTheme();
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
@@ -35,11 +35,12 @@ export default function Selector({ functions, selectedFunction, setSelectedFunct
 			</PopoverTrigger>
 			<PopoverContent className={`w-[600px] p-0 ${isDark ? "dark border-slate-600" : ""}`}>
 				<Command>
-					<CommandInput
-						placeholder="Type to search..."
-						className="dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
-						disabled={functions === null}
-					/>
+					{functions !== null && functions.length > 0 && (
+						<CommandInput
+							placeholder="Type to search..."
+							className="dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+						/>
+					)}
 					<CommandList className="dark:bg-slate-800">
 						{functions === null ? (
 							<div className="flex items-center justify-center py-8">
@@ -47,8 +48,13 @@ export default function Selector({ functions, selectedFunction, setSelectedFunct
 								<span className="text-sm text-slate-600 dark:text-slate-300">Loading functions...</span>
 							</div>
 						) : functions.length === 0 ? (
-							<CommandEmpty className="dark:text-slate-400">
-								No Functions found. See 'Docs' for how to use.
+							<CommandEmpty className="px-10 py-8 text-center">
+								<p className="text-sm font-semibold text-slate-900 dark:text-white">
+									No functions found
+								</p>
+								<p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+									See <span className="font-medium underline">Docs</span> for how to use.
+								</p>
 							</CommandEmpty>
 						) : (
 							<CommandGroup heading="Functions" className="dark:text-slate-300">

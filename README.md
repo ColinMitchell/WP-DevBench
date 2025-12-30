@@ -1,5 +1,5 @@
 
-# WP-DevBench
+# WP DevBench
 
 A powerful developer sandbox plugin for WordPress that lets you run custom PHP functions, test code snippets, and debug outputs directly in the WordPress admin dashboard.
 
@@ -17,18 +17,18 @@ A powerful developer sandbox plugin for WordPress that lets you run custom PHP f
 3. **Upload** the `wp-devbench` folder to `/wp-content/plugins/` directory on your web server
 4. **Activate** the plugin from your WordPress admin dashboard:
 	- Go to **Plugins** → **Installed Plugins**
-	- Find **WP-DevBench**
+	- Find **WP DevBench**
 	- Click **Activate**
 
 ## Usage
 
 ### Accessing the Plugin
 
-Once activated, you'll see a new **WP-DevBench** menu item in the WordPress admin sidebar.
+Once activated, you'll see a new **WP DevBench** menu item in the WordPress admin sidebar.
 
 ### Features
 
-**WP-DevBench** provides a safe sandbox environment where you can:
+**WP DevBench** provides a safe sandbox environment where you can:
 
 - **Run PHP Code** - Execute custom PHP functions and snippets without affecting your live site
 - **Test Code** - Test WordPress functions and hooks before deploying to production
@@ -42,7 +42,7 @@ Once activated, you'll see a new **WP-DevBench** menu item in the WordPress admi
 
 ### Getting Started
 
-1. Navigate to **WP-DevBench** in your admin dashboard
+1. Navigate to **WP DevBench** in your admin dashboard
 2. Enter your PHP code in the editor
 3. Click **Run** or **Execute**
 4. View the results and debug output below

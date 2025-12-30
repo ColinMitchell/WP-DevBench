@@ -47,7 +47,7 @@ class Plugin {
 		$this->admin = ! isset( $this->admin ) ? new Admin( $this ) : $this->admin;
 
 		// Testing Class
-		$this->test_class = ! isset( $this->test_class ) ? new TestClass() : $this->test_class;
+		// $this->test_class = ! isset( $this->test_class ) ? new TestClass() : $this->test_class;
 
 		add_action( 'plugins_loaded', array( $this, 'plugin_loaded' ) );
 	}
