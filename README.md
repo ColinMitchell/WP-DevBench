@@ -3,6 +3,8 @@
 
 A powerful developer sandbox plugin for WordPress that lets you run custom PHP functions, test code snippets, and debug outputs directly in the WordPress admin dashboard.
 
+<img width="2274" height="1326" alt="image" src="https://github.com/user-attachments/assets/f3f5544e-9e2e-4052-b5ac-4d3d2509a285" />
+
 ## Requirements
 
 - **WordPress:** 6.1 or higher
@@ -32,6 +34,11 @@ Once activated, you'll see a new **WP-DevBench** menu item in the WordPress admi
 - **Test Code** - Test WordPress functions and hooks before deploying to production
 - **Debug** - View detailed output, errors, and debugging information
 - **Inspect Data** - Use var_dump, print_r, and other debugging functions to inspect data
+
+### Error Debug Results
+
+<img width="1381" height="757" alt="error-debug-results" src="https://github.com/user-attachments/assets/433c77fe-bd00-468d-9018-989ccede4ccb" />
+
 
 ### Getting Started
 
