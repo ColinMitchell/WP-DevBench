@@ -6,7 +6,7 @@ namespace WP_DevBench\Inc\Services;
 use WP_DevBench\Inc\DataTransferObjects\DevBenchFunction;
 
 /**
- * Service for managing and executing sandbox functions.
+ * Service for managing and executing WP DevBench functions.
  */
 final class DevBenchService {
 
@@ -168,7 +168,7 @@ final class DevBenchService {
 			$result = call_user_func_array( $callback, $param_data );
 			error_log( '✅ DevBench: Success → ' . $function_name );
 
-			// If result is already a string, return as-is; otherwise JSON encode
+			// If a result is already a string, return as-is; otherwise JSON encode
 			if ( is_string( $result ) ) {
 				return $result;
 			}
@@ -283,31 +283,5 @@ final class DevBenchService {
 		) );
 
 		return true;
-	}
-
-	/**
-	 * Capture output of a function and return it as a string.
-	 *
-	 * @param callable $callback
-	 * @param mixed    ...$args
-	 *
-	 * @return string
-	 */
-	public static function capture_output( callable $callback, ...$args ): string {
-		ob_start();
-
-		try {
-			$callback( ...$args );
-		} catch ( \Throwable $e ) {
-			error_log( '🚨 DevBench capture_output error: ' . $e->getMessage() );
-			ob_end_clean();
-
-			return 'Error: ' . $e->getMessage();
-		}
-
-		$output = ob_get_contents();
-		ob_end_clean();
-
-		return $output;
 	}
 }

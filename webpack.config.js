@@ -6,7 +6,6 @@ module.exports = {
 	entry: {
 		...defaultConfig.entry,
 		devbench: path.resolve(process.cwd(), 'Admin/src/devbench', 'index.tsx'),
-		editor: path.resolve(process.cwd(), 'Admin/src', 'editor.ts'),
 		'dark-mode-wp-sync': path.resolve(process.cwd(), 'Admin/src', 'dark-mode-wp-sync.ts'),
 		'globals': path.resolve(process.cwd(), 'Admin/src', 'globals.css'),
 	},
@@ -18,7 +17,6 @@ module.exports = {
 		...defaultConfig.resolve,
 		alias: {
 			...defaultConfig.resolve.alias,
-			// add as many aliases as you like!
 			'@': path.resolve(__dirname, './Admin/src'),
 			'@components': path.resolve(__dirname, './Admin/src/components'),
 			'@lib': path.resolve(__dirname, './Admin/src/lib'),

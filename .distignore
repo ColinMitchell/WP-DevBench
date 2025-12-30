@@ -1,22 +1,37 @@
-/.git
-/.github
-/node_modules
-/tests
-/Admin/src
-*.log
-.DS_Store
+# Git / CI / dev
+.git
+.github
+.husky
+Tests
+
+# Node / Composer
+node_modules/
+
+# Config files
 .editorconfig
-.gitignore
+.eslintignore
+.eslintrc
 .nvmrc
-package.json
-package-lock.json
-composer.json
-composer.lock
-webpack.config.js
+.prettierrc
+docker-composer.sh
 phpcs.xml
+phpcs.xml.dist
+phpcs-base.xml
 phpstan.neon
 phpunit.xml
+package.json
+package-lock.json
 tsconfig.json
-tailwind.config.js
+webpack.config.js
 postcss.config.js
-.prettierrc
+tailwind.config.js
+components.json
+
+# Docs
+*.md
+
+# Build / src to exclude
+Admin/src
+
+# Ignore the distignore itself
+.distignore

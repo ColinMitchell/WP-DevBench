@@ -10,7 +10,7 @@ use WP_DevBench\Inc\Plugin;
  */
 final class Admin {
 	/**
-	 * @var \WP_DevBench\Admin\DevBenchPage
+	 * @var DevBenchPage
 	 */
 	private DevBenchPage $dev_bench_page;
 
@@ -19,8 +19,6 @@ final class Admin {
 	}
 
 	public function init(): void {
-		if ( ! isset( $this->dev_bench_page ) ) {
-			$this->dev_bench_page = new DevBenchPage( $this->plugin );
-		}
+		$this->dev_bench_page = ! isset( $this->dev_bench_page ) ? new DevBenchPage( $this->plugin ) : $this->dev_bench_page;
 	}
 }
