@@ -53,7 +53,6 @@ abstract class Api extends \WP_REST_Controller {
 	 * @return true|\WP_Error Returns true if the nonce is present and valid; otherwise, returns a WP_Error object.
 	 */
 	public function authorize(): true|\WP_Error {
-
 		if ( ! isset( $_SERVER['HTTP_X_WP_NONCE'] ) ) {
 			return new \WP_Error(
 				'rest_invalid_nonce',

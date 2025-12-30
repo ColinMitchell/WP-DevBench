@@ -21,7 +21,6 @@ final class DevBenchApi extends Api implements ApiInterface {
 	public function __construct( protected Plugin $plugin ) {
 		parent::__construct();
 
-		// Initialize service
 		$devbench_service = new DevBenchService();
 
 		$this->devbench_controller = new DevBenchController( $devbench_service );

@@ -12,6 +12,8 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
+              with:
+                  ref: develop
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
@@ -26,7 +28,9 @@ jobs:
                   coverage: none
 
             - name: Install Node dependencies
-              run: npm ci
+              run: npm ci --ignore-scripts
+              env:
+                  HUSKY: 0  # Disable husky in CI
 
             - name: Install Composer dependencies (production)
               run: composer install --no-dev --optimize-autoloader --prefer-dist
@@ -44,6 +48,16 @@ jobs:
                   cd dist
                   zip -r wp-devbench.zip wp-devbench
                   cd ..
+
+            - name: Push to main branch
+              run: |
+                  cd dist/wp-devbench
+                  git init
+                  git config user.name "GitHub Actions"
+                  git config user.email "actions@github.com"
+                  git add -A
+                  git commit -m "Release ${{ github.ref_name }}"
+                  git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
 
             - name: Create Release
               uses: softprops/action-gh-release@v2

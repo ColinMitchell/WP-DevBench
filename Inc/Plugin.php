@@ -43,35 +43,20 @@ class Plugin {
 	}
 
 	public function init(): void {
-		// Core Services
-		$this->admin         = ! isset( $this->admin ) ? new Admin( $this ) : $this->admin;
+		// Core Admin Services
+		$this->admin = ! isset( $this->admin ) ? new Admin( $this ) : $this->admin;
 
 		// Testing Class
 		$this->test_class = ! isset( $this->test_class ) ? new TestClass() : $this->test_class;
 
 		add_action( 'plugins_loaded', array( $this, 'plugin_loaded' ) );
-
-		/**
-		 * This allows any custom cache under 'wp-devbench' cache group to be global and accessible by all subsites.
-		 * Better explanation here: https://wordpress.stackexchange.com/a/265433/125910
-		 *
-		 * Follow these rules:
-		 * How to use global: wp_cache_add( 'my_cache', $cache, 'wp-devbench' );
-		 * How to use per-site: wp_cache_add( sprintf( 'my_cache:%d', get_current_blog_id() ), $cache, 'wp-devbench' );
-		 */
-		if ( function_exists( 'wp_cache_add_global_groups' ) ) {
-			wp_cache_add_global_groups( array( 'wp-devbench' ) );
-		}
 	}
 
-	public function remove_hooks() {
-		/*
-		remove_action( 'plugins_loaded', [$this->plugin, 'pluginLoaded']);
-		remove_action( 'admin_menu', [$this->settingsPage, 'addPage' ]);
-		remove_action( 'rest_api_init', [$this->plugin->getRestApi(), 'registerRoutes']);
-		remove_action( 'admin_enqueue_scripts', [$this->settingsPage, 'registerAssets'] );*/
-	}
-
+	/**
+	 * When plugin is loaded, load our textdomain for localization support.
+	 *
+	 * @return void
+	 */
 	public function plugin_loaded(): void {
 		load_plugin_textdomain( 'wp-devbench-plugin' );
 	}

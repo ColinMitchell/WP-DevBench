@@ -16,6 +16,8 @@ class DevBenchPage {
 
 	const string SCREEN = 'wp-devbench';
 
+	const string REST_ENDPOINT = 'wp-devbench/v1';
+
 	/**
 	 * @var DevBenchApi
 	 */
@@ -34,11 +36,11 @@ class DevBenchPage {
 	/**
 	 * Register assets
 	 *
-	 * @since 0.0.1
+	 * @param string $hook
 	 *
-	 * @uses "admin_enqueue_scripts" action
+	 * @return void
 	 */
-	public function register_assets( $hook ): void {
+	public function register_assets( string $hook ): void {
 
 		if ( $hook !== 'toplevel_page_wp-devbench' ) {
 			return;
@@ -83,10 +85,8 @@ class DevBenchPage {
 	 * Adds the devbench page to the Settings menu.
 	 *
 	 * @return void
-	 * @since 0.0.1
 	 */
 	public function add_page(): void {
-		// Add the top-level menu page
 		add_menu_page(
 			page_title: __( 'WP DevBench', 'wp-devbench-plugin' ),
 			menu_title: __( 'WP DevBench', 'wp-devbench-plugin' ),
@@ -104,7 +104,6 @@ class DevBenchPage {
 	 * @param array $links List of plugin action links HTML.
 	 *
 	 * @return array
-	 * @since 1.0.0
 	 */
 	public function add_menu_page( array $links ): array {
 		// Add link as the first plugin action link.
@@ -122,7 +121,7 @@ class DevBenchPage {
 	/**
 	 * Renders the devbench page.
 	 *
-	 * @since 0.0.1
+	 * @return void
 	 */
 	public function render_page(): void {
 		wp_enqueue_script( self::SCREEN );
@@ -137,7 +136,7 @@ class DevBenchPage {
 			self::SCREEN,
 			'wpDevBench',
 			array(
-				'apiUrl'        => rest_url( 'wp-devbench/v1' ),
+				'apiUrl'        => rest_url( self::REST_ENDPOINT ),
 				'baseApiUrl'    => untrailingslashit( rest_url() ),
 				'currentBlogId' => get_current_blog_id(),
 				'userName'      => $current_user->user_login,

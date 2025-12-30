@@ -3,8 +3,8 @@
  * Plugin Name:       WP-DevBench
  * Description:       A developer sandbox for WordPress that lets you run custom PHP functions, test code snippets, and debug outputs directly in the admin dashboard.
  * Requires at least: 6.1
- * Requires PHP:      8.0
- * Version:           0.1.0
+ * Requires PHP:      8.3
+ * Version:           1.0.0
  * Author:            ColinMitchell
  * Author URI:        https://github.com/ColinMitchell
  * Plugin URI:        https://github.com/ColinMitchell
@@ -30,7 +30,7 @@ define( 'WP_DEVBENCH_DIR', plugin_dir_path( __FILE__ ) );
 const WP_DEVBENCH_VERSION = '1.0.0';
 
 /**
- * Main file of plugin
+ * Main file of the plugin
  */
 const WP_DEVBENCH_MAIN_FILE = __FILE__;
 
@@ -47,7 +47,5 @@ add_action( 'wp_devbench_init', function () {
  * Start Plugin
  *
  * @param Plugin $plugin
- *
- * @since 1.0.0
  */
 do_action( 'wp_devbench_init', new Plugin() );

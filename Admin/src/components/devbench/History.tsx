@@ -7,13 +7,25 @@ import { FuncInterface } from "@/types/types";
 import { ParamsDataPopover } from "@components/devbench/ParamsDataPopover";
 import { cn } from "@lib/utils";
 
+enum RunStatus {
+    SUCCESS = "success",
+    ERROR = "error",
+    RUNNING = "running"
+}
+
+const STATUS_COLORS: Record<RunStatus, string> = {
+    [RunStatus.SUCCESS]: "dark:bg-emerald-950 dark:text-emerald-200 dark:border-emerald-800 bg-emerald-50 text-emerald-900 border-emerald-200",
+    [RunStatus.ERROR]: "dark:bg-rose-950 dark:text-rose-200 dark:border-rose-800 bg-rose-50 text-rose-900 border-rose-200",
+    [RunStatus.RUNNING]: "dark:bg-blue-950 dark:text-blue-200 dark:border-blue-800 bg-blue-50 text-blue-900 border-blue-200"
+};
+
 interface RunHistoryItem {
 	id: string;
 	function: FuncInterface;
 	params: any[];
 	timestamp: Date;
 	duration?: string;
-	status: "success" | "error" | "running";
+	status: RunStatus;
 }
 
 interface RecentRunsProps {
@@ -25,26 +37,17 @@ interface RecentRunsProps {
 }
 
 export default function History({ runs, onClear, onRerun, onRemove, disabled = false }: RecentRunsProps) {
-	const getStatusColor = (status: string) => {
-		switch (status) {
-			case "success":
-				return "dark:bg-emerald-950 dark:text-emerald-200 dark:border-emerald-800 bg-emerald-50 text-emerald-900 border-emerald-200";
-			case "error":
-				return "dark:bg-rose-950 dark:text-rose-200 dark:border-rose-800 bg-rose-50 text-rose-900 border-rose-200";
-			case "running":
-				return "dark:bg-blue-950 dark:text-blue-200 dark:border-blue-800 bg-blue-50 text-blue-900 border-blue-200";
-			default:
-				return "dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 bg-slate-100 text-slate-900 border-slate-200";
-		}
-	};
+    const getStatusColor = (status: RunStatus): string => {
+        return STATUS_COLORS[status] || "dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 bg-slate-100 text-slate-900 border-slate-200";
+    };
 
 	const getStatusIcon = (status: string) => {
 		switch (status) {
-			case "success":
+			case RunStatus.SUCCESS:
 				return <Check className="h-3 w-3" />;
-			case "error":
+			case RunStatus.ERROR:
 				return <X className="h-3 w-3" />;
-			case "running":
+			case RunStatus.RUNNING:
 				return <Loader2 className="h-3 w-3 animate-spin" />;
 			default:
 				return null;
@@ -124,7 +127,6 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
 									<div className="text-xs text-muted-foreground dark:text-slate-400">
 										<ParamsDataPopover params={run.params}>
 											<div className="relative mt-1 cursor-pointer rounded bg-muted/30 p-2 font-mono text-xs transition-colors hover:bg-muted/50 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
-												{/* Absolute positioned icon trigger */}
 												<div className="absolute right-2 top-2">
 													<Button
 														variant="ghost"
@@ -135,7 +137,6 @@ export default function History({ runs, onClear, onRerun, onRemove, disabled = f
 													</Button>
 												</div>
 
-												{/* JSON content */}
 												{JSON.stringify(run.params, null, 2).length > 100
 													? `${JSON.stringify(run.params, null, 2).substring(0, 100)}...`
 													: JSON.stringify(run.params, null, 2)}

@@ -4,6 +4,7 @@ import { Button } from "@components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@components/ui/command";
 import { ArrowUpDown, Loader2 } from "lucide-react";
 import { FuncInterface } from "@/types/types";
+import {useTheme} from "@/contexts/ThemeContext";
 
 export interface selectorProps {
 	functions: FuncInterface[] | null;
@@ -14,6 +15,7 @@ export interface selectorProps {
 
 export default function Selector({ functions, selectedFunction, setSelectedFunction, onClearResults }: selectorProps) {
 	const [open, setOpen] = React.useState(false);
+    const { isDark } = useTheme();
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
@@ -21,7 +23,7 @@ export default function Selector({ functions, selectedFunction, setSelectedFunct
 				<Button
 					variant="outline"
 					role="combobox"
-					aria-label="Load a hook..."
+					aria-label="Load a function..."
 					aria-expanded={open}
 					className="flex-1 justify-between dark:border-slate-600 dark:bg-slate-700 dark:text-white lg:max-w-[600px]"
 				>
@@ -31,7 +33,7 @@ export default function Selector({ functions, selectedFunction, setSelectedFunct
 					<ArrowUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className="w-[600px] p-0 dark:border-slate-600 dark:bg-slate-800">
+			<PopoverContent className={`w-[600px] p-0 ${isDark ? "dark border-slate-600" : ""}`}>
 				<Command>
 					<CommandInput
 						placeholder="Type to search..."

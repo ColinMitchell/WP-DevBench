@@ -2,7 +2,7 @@
 	"name": "wp-devbench-plugin",
 	"version": "1.0.0",
 	"description": "A developer sandbox for WordPress that lets you run custom PHP functions, test code snippets, and debug outputs directly in the admin dashboard.",
-	"author": "ColinMitchell",
+	"author": "Colin Mitchell",
 	"license": "GPL-2.0-or-later",
 	"main": "build/devbench.js",
 	"scripts": {
@@ -18,11 +18,11 @@
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start",
 		"prepare": "husky",
-		"phpcbf": "./docker-composer.sh format",
-		"phpstan": "./docker-composer.sh phpstan",
-		"phpcs": "./docker-composer.sh phpcs",
-		"pest": "./docker-composer.sh pest",
-		"test": "./docker-composer.sh test"
+		"phpcbf": "bash docker-composer.sh format",
+		"phpstan": "bash docker-composer.sh phpstan",
+		"phpcs": "bash docker-composer.sh phpcs",
+		"pest": "bash docker-composer.sh pest",
+		"test": "bash docker-composer.sh test"
 	},
 	"devDependencies": {
 		"@types/react": "^18.3.1",
@@ -94,8 +94,8 @@
 	"lint-staged": {
 		"concurrent": false,
 		"*.php": [
-			"./docker-composer.sh phpcbf",
-			"./docker-composer.sh phpcs"
+			"bash docker-composer.sh phpcbf",
+			"bash docker-composer.sh phpcs"
 		],
 		"*.{js,jsx,ts,tsx}": [
 			"wp-scripts lint-js --fix"

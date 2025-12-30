@@ -2,4 +2,6 @@
 
 set -euo pipefail
 
-docker-compose exec -T webserver composer "$@"
+PLUGIN_PATH="web/app/plugins/wp-devbench"
+
+docker-compose exec -T webserver bash -c "cd $PLUGIN_PATH && composer $*"
