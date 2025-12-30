@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="WP-DevBench Custom WordPress Coding Styles">
+<ruleset name="WP DevBench Custom WordPress Coding Styles">
 
   <rule ref="./phpcs-base.xml"/>
 

@@ -26,7 +26,7 @@ export default function DocsModal() {
 					className={`max-h-[85vh] max-w-4xl overflow-y-auto ${isDark ? "dark border-slate-700 bg-slate-900 text-slate-100" : "border border-slate-200 bg-white text-slate-900"}`}
 				>
 					<DialogHeader>
-						<DialogTitle className="dark:text-slate-100">WP-DevBench Documentation</DialogTitle>
+						<DialogTitle className="dark:text-slate-100">WP DevBench Documentation</DialogTitle>
 						<DialogDescription className="dark:text-slate-400">
 							Register and execute PHP functions directly from your plugins and themes
 						</DialogDescription>
@@ -62,9 +62,9 @@ export default function DocsModal() {
 
 						{/* GETTING STARTED TAB */}
 						<TabsContent value="getting-started" className="space-y-4">
-							<h3 className="text-base font-semibold dark:text-slate-100">What is WP-DevBench?</h3>
+							<h3 className="text-base font-semibold dark:text-slate-100">What is WP DevBench?</h3>
 							<p className="text-sm dark:text-slate-300">
-								WP-DevBench is a developer sandbox that allows you to register and execute custom PHP
+								WP DevBench is a developer sandbox that allows you to register and execute custom PHP
 								functions directly from the WordPress admin dashboard. Perfect for testing, debugging,
 								and benchmarking code in your plugins and themes without modifying files.
 							</p>
@@ -114,10 +114,10 @@ export default function DocsModal() {
 							</p>
 							<div className="overflow-x-auto rounded border border-slate-300 bg-slate-100 p-4 dark:border-slate-700 dark:bg-slate-800">
 								<pre className="font-mono text-xs text-slate-900 dark:text-slate-300">
-									{`use WP_DevBench\Inc\Services\DevBench;
+									{`use WP_DevBench\\Inc\\Services\\DevBenchService;
 
 DevBench::add_function(
-    class: get_class( $this ),
+    source: get_class( $this ),
     function_name: 'my_function',
     callback: [ $this, 'my_function' ],
     params: [ /* ... */ ],
@@ -135,7 +135,7 @@ DevBench::add_function(
 							<div className="overflow-x-auto rounded border border-slate-300 bg-slate-100 p-4 dark:border-slate-700 dark:bg-slate-800">
 								<pre className="font-mono text-xs text-slate-900 dark:text-slate-300">
 									{`devbench_add_function(
-    class: 'my-plugin',
+    source: 'my-plugin',
     function_name: 'my_function',
     callback: function() {
         // Your code here
@@ -156,7 +156,7 @@ DevBench::add_function(
 								<pre className="font-mono text-xs text-slate-900 dark:text-slate-300">
 									{`add_action( 'wp_devbench_register_functions', function() {
     devbench_add_function(
-        class: 'my-plugin',
+        source: 'my-plugin',
         function_name: 'my_function',
         callback: 'my_plugin_callback',
         params: [ /* ... */ ]

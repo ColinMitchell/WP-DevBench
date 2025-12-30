@@ -54,7 +54,7 @@
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"scripts": {
-		"format": "vendor/bin/phpcbf -p --standard=phpcs.xml",
+		"phpcbf": "vendor/bin/phpcbf -p --standard=phpcs.xml",
 		"phpcs": "vendor/bin/phpcs",
 		"pest": "vendor/bin/pest",
 		"phpstan": "vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=2048M",

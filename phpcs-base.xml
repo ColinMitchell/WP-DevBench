@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="WP-DevBench Base PHPCS Configuration">
+<ruleset name="WP DevBench Base PHPCS Configuration">
   <description>Common PHPCS settings, exclusions, and file paths.</description>
 
   <arg name="extensions" value="php"/>
