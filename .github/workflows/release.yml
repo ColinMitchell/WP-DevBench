@@ -8,6 +8,8 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
 
         steps:
             - name: Checkout code
@@ -30,7 +32,7 @@ jobs:
             - name: Install Node dependencies
               run: npm ci --ignore-scripts
               env:
-                  HUSKY: 0  # Disable husky in CI
+                  HUSKY: 0
 
             - name: Install Composer dependencies (production)
               run: composer install --no-dev --optimize-autoloader --prefer-dist
@@ -55,9 +57,12 @@ jobs:
                   git init
                   git config user.name "GitHub Actions"
                   git config user.email "actions@github.com"
+                  git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
                   git add -A
                   git commit -m "Release ${{ github.ref_name }}"
-                  git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+                  git push --force origin HEAD:main
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Create Release
               uses: softprops/action-gh-release@v2
