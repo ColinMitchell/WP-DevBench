@@ -30,6 +30,10 @@ components.json
 # Docs
 *.md
 
+# Dist folders
+dist
+manual-dist
+
 # Build / src to exclude
 Admin/src
 
