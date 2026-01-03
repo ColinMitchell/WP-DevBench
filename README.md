@@ -8,7 +8,7 @@ A powerful developer sandbox plugin for WordPress that lets you run custom PHP f
 ## Requirements
 
 - **WordPress:** 6.1 or higher
-- **PHP:** 8.0 or higher
+- **PHP:** 8.3 or higher
 
 ## Installation
 
@@ -20,6 +20,12 @@ A powerful developer sandbox plugin for WordPress that lets you run custom PHP f
 	- Find **WP DevBench**
 	- Click **Activate**
 
+### Via Composer (Upcoming)
+
+```bash
+composer require colinmitchell/wp-devbench
+```
+
 ## Usage
 
 ### Accessing the Plugin
@@ -30,10 +36,195 @@ Once activated, you'll see a new **WP DevBench** menu item in the WordPress admi
 
 **WP DevBench** provides a safe sandbox environment where you can:
 
-- **Run PHP Code** - Execute custom PHP functions and snippets without affecting your live site
-- **Test Code** - Test WordPress functions and hooks before deploying to production
-- **Debug** - View detailed output, errors, and debugging information
-- **Inspect Data** - Use var_dump, print_r, and other debugging functions to inspect data
+- **Run PHP Code** - Execute custom PHP functions and snippets from within the dashboard.
+- **Test Code** - Test WordPress functions and hooks before deploying to production.
+- **Debug** - View detailed output, errors, and debugging information/stack tracing.
+- **Inspect Data** - Return var_dump, print_r, and other debugging functions to inspect data.
+
+## Usage
+
+### Basic Function Registration
+
+The simplest way to register a function:
+
+```php
+devbench_add_function(
+    source: 'my-plugin',
+    function_name: 'get_user_count',
+    callback: function() {
+        return count_users()['total_users'];
+    },
+    description: 'Get total number of users'
+);
+```
+
+### With Parameters
+
+Add dynamic parameters that appear as form fields in the dashboard:
+
+```php
+devbench_add_function(
+    source: 'my-plugin',
+    function_name: 'get_user_data',
+    callback: function(int $user_id) {
+        $user = get_userdata($user_id);
+        return $user ? $user->to_array() : null;
+    },
+    params: [
+        [
+            'id'    => 'user_id',
+            'type'  => 'integer',
+            'title' => 'User ID',
+        ],
+    ],
+    description: 'Fetch user information by ID'
+);
+```
+
+### With Dropdown Choices
+
+Create select dropdowns for predefined options:
+
+```php
+devbench_add_function(
+    source: 'my-plugin',
+    function_name: 'query_posts',
+    callback: function(string $status, int $count) {
+        return get_posts([
+            'post_status'    => $status,
+            'posts_per_page' => $count,
+        ]);
+    },
+    params: [
+        [
+            'id'      => 'status',
+            'type'    => 'string',
+            'title'   => 'Post Status',
+            'choices' => ['draft', 'publish', 'pending', 'trash'],
+            'default' => 'publish',
+        ],
+        [
+            'id'      => 'count',
+            'type'    => 'integer',
+            'title'   => 'Number of Posts',
+            'default' => 10,
+        ],
+    ],
+    description: 'Query posts by status and count'
+);
+```
+
+### With File Uploads
+
+Accept file uploads (CSV, XML, JSON, etc.):
+
+```php
+devbench_add_function(
+    source: 'my-plugin',
+    function_name: 'import_csv',
+    callback: function(string $csv_file) {
+        // File arrives as base64 data URI
+        // Example: "data:text/csv;name=users.csv;base64,ABC123..."
+        
+        // Parse the data URI
+        preg_match('/^data:([^;]+);name=([^;]+);base64,(.+)$/', $csv_file, $matches);
+        $mime_type = $matches[1];
+        $filename  = $matches[2];
+        $base64    = $matches[3];
+        $content   = base64_decode($base64);
+        
+        // Process CSV
+        $rows = array_map('str_getcsv', explode("\n", $content));
+        
+        return [
+            'filename' => $filename,
+            'rows'     => count($rows),
+            'preview'  => array_slice($rows, 0, 5),
+        ];
+    },
+    params: [
+        [
+            'id'     => 'csv_file',
+            'type'   => 'file',
+            'title'  => 'Upload CSV File',
+            'accept' => '.csv',
+        ],
+    ],
+    description: 'Import and preview CSV data'
+);
+```
+
+## Registration Methods
+
+### Method 1: Global Function (Recommended for Most Cases)
+
+Use the global `devbench_add_function()` helper. Works everywhere without dependencies:
+
+```php
+devbench_add_function(
+    source: 'my-plugin',
+    function_name: 'my_function',
+    callback: 'my_callback_function',
+    params: [],
+    description: 'My custom function'
+);
+```
+
+### Method 2: OOP with Composer
+
+For plugin developers using Composer and autoloading:
+
+```php
+use WP_DevBench\Inc\Services\DevBench;
+
+final class MyPlugin {
+    public function __construct() {
+        add_action('init', [$this, 'register_devbench']);
+    }
+
+    public function register_devbench(): void {
+        DevBench::add_function(
+            source: get_class($this),
+            function_name: 'get_stats',
+            callback: [$this, 'get_stats'],
+            params: [],
+            description: 'Get plugin statistics'
+        );
+    }
+
+    public function get_stats(): array {
+        return [
+            'version' => $this->version,
+            'active'  => true,
+        ];
+    }
+}
+```
+
+### Method 3: WordPress Action Hook
+
+Most declarative approach, great for mu-plugins:
+
+```php
+add_action('wp_devbench_register_functions', function() {
+    devbench_add_function(
+        source: 'my-mu-plugin',
+        function_name: 'maintenance_mode',
+        callback: function(bool $enable) {
+            update_option('maintenance_mode', $enable);
+            return ['maintenance_mode' => $enable];
+        },
+        params: [
+            [
+                'id'      => 'enable',
+                'type'    => 'boolean',
+                'title'   => 'Enable Maintenance Mode',
+                'default' => false,
+            ],
+        ]
+    );
+});
+```
 
 ### Error Debug Results
 
@@ -47,14 +238,30 @@ Once activated, you'll see a new **WP DevBench** menu item in the WordPress admi
 3. Click **Run** or **Execute**
 4. View the results and debug output below
 
+### Setup Development Environment
+
+```bash
+# Clone repository
+git clone https://github.com/ColinMitchell/wp-devbench.git
+cd wp-devbench
+
+# Install dependencies
+composer install
+npm install
+
+# Start development server
+npm start
+
+# Start local WordPress (Docker)
+npm run env start
+```
+
 ### Available NPM Scripts
 
 - **`npm run build`** - Build JavaScript and CSS assets
 - **`npm start`** - Start development server with hot reload
 - **`npm run format`** - Format all code (JS, CSS, PHP)
 - **`npm run lint`** - Run linters without fixing
-- **`npm run dist`** - Create production build with optimized dependencies
-- **`npm run plugin-zip`** - Generate distributable plugin ZIP file
 - **`npm env start`** - Start local WordPress environment via Docker
 
 ### Composer Scripts
@@ -63,7 +270,7 @@ Once activated, you'll see a new **WP DevBench** menu item in the WordPress admi
 - **`composer phpstan`** - Run PHPStan static analysis
 - **`composer phpcs`** - Run PHP CodeSniffer
 - **`composer pest`** - Run Pest PHP tests
-- **`composer format`** - Auto-fix PHP code style issues
+- **`composer phpcbf`** - Auto-fix PHP code style issues
 
 ### Code Quality
 
@@ -81,6 +288,12 @@ The plugin uses industry-standard tools for code quality:
 For issues, questions, or feature requests, visit:
 - **GitHub:** https://github.com/ColinMitchell/wp-devbench/issues
 - **Documentation:** https://github.com/ColinMitchell/wp-devbench
+
+## Roadmap
+
+- [ ] Localization Support
+- [ ] Multisite Toggle Support (Spoof which site the function is running on)
+- [ ] CLI Support - Run functions from WP CLI
 
 ## License
 
