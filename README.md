@@ -5,6 +5,10 @@ A powerful developer sandbox plugin for WordPress that lets you run custom PHP f
 
 <img width="2274" height="1326" alt="image" src="https://github.com/user-attachments/assets/f3f5544e-9e2e-4052-b5ac-4d3d2509a285" />
 
+#### Dark Mode Theme Support
+
+<img width="2270" height="1324" alt="Screenshot 2025-12-28 222835" src="https://github.com/user-attachments/assets/ff81ce41-6eee-4157-8d08-732cbe35bc5c" />
+
 ## Requirements
 
 - **WordPress:** 6.1 or higher
