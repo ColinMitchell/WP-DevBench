@@ -110,7 +110,6 @@ export default function Result({ response, error, debugLog, disabled = false, se
 			);
 		}
 
-		// Stacked layout: Error above Debug Log
 		return (
 			<div className="space-y-4">
 				{hasError && (

@@ -1,13 +1,13 @@
-const defaultConfig = require('@wordpress/scripts/config/webpack.config');
-const path = require('path');
+const defaultConfig = require("@wordpress/scripts/config/webpack.config");
+const path = require("path");
 
 module.exports = {
 	...defaultConfig,
 	entry: {
 		...defaultConfig.entry,
-		devbench: path.resolve(process.cwd(), 'Admin/src/devbench', 'index.tsx'),
-		'dark-mode-wp-sync': path.resolve(process.cwd(), 'Admin/src', 'dark-mode-wp-sync.ts'),
-		'globals': path.resolve(process.cwd(), 'Admin/src', 'globals.css'),
+		devbench: path.resolve(process.cwd(), "src/devbench", "index.tsx"),
+		"dark-mode-wp-sync": path.resolve(process.cwd(), "src", "dark-mode-wp-sync.ts"),
+		globals: path.resolve(process.cwd(), "src", "globals.css"),
 	},
 	watchOptions: {
 		aggregateTimeout: 300,
@@ -17,14 +17,13 @@ module.exports = {
 		...defaultConfig.resolve,
 		alias: {
 			...defaultConfig.resolve.alias,
-			'@': path.resolve(__dirname, './Admin/src'),
-			'@components': path.resolve(__dirname, './Admin/src/components'),
-			'@lib': path.resolve(__dirname, './Admin/src/lib'),
-			'@pages': path.resolve(__dirname, './Admin/src/pages'),
-			'@types': path.resolve(__dirname, './Admin/src/types'),
-			'@utils': path.resolve(__dirname, './Admin/src/utils'),
-			'@assets': path.resolve(__dirname, './Admin/src/assets'),
+			"@": path.resolve(__dirname, "./src"),
+			"@components": path.resolve(__dirname, "./src/components"),
+			"@lib": path.resolve(__dirname, "./src/lib"),
+			"@pages": path.resolve(__dirname, "./src/pages"),
+			"@types": path.resolve(__dirname, "./src/types"),
+			"@utils": path.resolve(__dirname, "./src/utils"),
+			"@assets": path.resolve(__dirname, "./src/assets"),
 		},
-	}
-
+	},
 };

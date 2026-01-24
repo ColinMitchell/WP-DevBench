@@ -1,5 +1,5 @@
-Admin/src/components/ui/
-Admin/src/components/ui/**
+src/components/ui/
+src/components/ui/**
 build/
 node_modules/
 vendor/
