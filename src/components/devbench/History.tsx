@@ -8,15 +8,18 @@ import { ParamsDataPopover } from "@components/devbench/ParamsDataPopover";
 import { cn } from "@lib/utils";
 
 enum RunStatus {
-    SUCCESS = "success",
-    ERROR = "error",
-    RUNNING = "running"
+	SUCCESS = "success",
+	ERROR = "error",
+	RUNNING = "running",
 }
 
 const STATUS_COLORS: Record<RunStatus, string> = {
-    [RunStatus.SUCCESS]: "dark:bg-emerald-950 dark:text-emerald-200 dark:border-emerald-800 bg-emerald-50 text-emerald-900 border-emerald-200",
-    [RunStatus.ERROR]: "dark:bg-rose-950 dark:text-rose-200 dark:border-rose-800 bg-rose-50 text-rose-900 border-rose-200",
-    [RunStatus.RUNNING]: "dark:bg-blue-950 dark:text-blue-200 dark:border-blue-800 bg-blue-50 text-blue-900 border-blue-200"
+	[RunStatus.SUCCESS]:
+		"dark:bg-emerald-950 dark:text-emerald-200 dark:border-emerald-800 bg-emerald-50 text-emerald-900 border-emerald-200",
+	[RunStatus.ERROR]:
+		"dark:bg-rose-950 dark:text-rose-200 dark:border-rose-800 bg-rose-50 text-rose-900 border-rose-200",
+	[RunStatus.RUNNING]:
+		"dark:bg-blue-950 dark:text-blue-200 dark:border-blue-800 bg-blue-50 text-blue-900 border-blue-200",
 };
 
 interface RunHistoryItem {
@@ -37,9 +40,12 @@ interface RecentRunsProps {
 }
 
 export default function History({ runs, onClear, onRerun, onRemove, disabled = false }: RecentRunsProps) {
-    const getStatusColor = (status: RunStatus): string => {
-        return STATUS_COLORS[status] || "dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 bg-slate-100 text-slate-900 border-slate-200";
-    };
+	const getStatusColor = (status: RunStatus): string => {
+		return (
+			STATUS_COLORS[status] ||
+			"dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 bg-slate-100 text-slate-900 border-slate-200"
+		);
+	};
 
 	const getStatusIcon = (status: string) => {
 		switch (status) {

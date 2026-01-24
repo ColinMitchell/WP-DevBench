@@ -35,7 +35,7 @@ dist
 manual-dist
 
 # Build / src to exclude
-Admin/src
+src
 
 # Ignore the distignore itself
 .distignore
