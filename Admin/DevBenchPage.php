@@ -19,6 +19,11 @@ class DevBenchPage {
 	const string REST_ENDPOINT = 'wp-devbench/v1';
 
 	/**
+	 * Option name for the install ID to make local history unique per installation.
+	 */
+	const string INSTALL_ID_OPTION = 'wp_devbench_install_id';
+
+	/**
 	 * @var DevBenchApi
 	 */
 	private DevBenchApi $devbench_api;
@@ -130,6 +135,13 @@ class DevBenchPage {
 
 		$current_user = wp_get_current_user();
 		$user_role    = ! empty( $current_user->roles ) ? $current_user->roles[0] : 'wp_devbench_viewer';
+		$install_id   = get_option( self::INSTALL_ID_OPTION );
+
+		if ( ! is_string( $install_id ) || '' === $install_id ) {
+			$install_id = wp_generate_uuid4();
+
+			add_option( self::INSTALL_ID_OPTION, $install_id, '', false );
+		}
 
 		// Dev note, you could also preload any options here too instead of doing useEffect on init
 		wp_localize_script(
@@ -139,6 +151,12 @@ class DevBenchPage {
 				'apiUrl'        => rest_url( self::REST_ENDPOINT ),
 				'baseApiUrl'    => untrailingslashit( rest_url() ),
 				'currentBlogId' => get_current_blog_id(),
+				'storagePrefix' => sprintf(
+					'wp-devbench:%s:blog:%d:user:%d',
+					sanitize_key( $install_id ),
+					get_current_blog_id(),
+					get_current_user_id()
+				),
 				'userName'      => $current_user->user_login,
 				'userRole'      => $user_role,
 				'nonce'         => wp_create_nonce( 'wp_rest' ),
@@ -147,6 +165,6 @@ class DevBenchPage {
 
 		echo '<div class="wp-devbench-plugin-wrap">';
 		echo '<div id="' . esc_attr( self::SCREEN ) . '"></div>';
-		echo '<div class="wp-devbench-plugin-wrap">';
+		echo '</div>';
 	}
 }

@@ -6,6 +6,7 @@ declare global {
 		apiUrl: string;
 		baseApiUrl: string;
 		currentBlogId: number;
+        storagePrefix: string;
 		userName: string;
 		userRole: string;
 		nonce: string;

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { storage } from "@utils/storage";
 
 interface ThemeContextType {
 	isDark: boolean;
@@ -12,7 +13,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 	// Initialize from localStorage on mount
 	useEffect(() => {
-		const stored = localStorage.getItem("wp-devbench-theme");
+		const stored = storage.getItem("theme");
 		const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
 		if (stored !== null) {
@@ -37,7 +38,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 	const toggleTheme = () => {
 		const newValue = !isDark;
 		setIsDark(newValue);
-		localStorage.setItem("wp-devbench-theme", newValue ? "dark" : "light");
+		storage.setItem("theme", newValue ? "dark" : "light");
 	};
 
 	return <ThemeContext.Provider value={{ isDark, toggleTheme }}>{children}</ThemeContext.Provider>;
