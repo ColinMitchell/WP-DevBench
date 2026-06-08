@@ -13,6 +13,7 @@ import FunctionParams from "@components/devbench/FunctionParams";
 import { ThemeToggle } from "@components/global/ThemeToggle";
 import DocsModal from "@components/global/DocsModal";
 import { cn } from "@lib/utils";
+import { storage } from "@utils/storage";
 
 interface ApiResponse {
 	success: boolean;
@@ -287,7 +288,7 @@ export default function DevBench() {
 	 */
 	const clearRunHistory = () => {
 		setRunHistory([]);
-		localStorage.removeItem("runHistory");
+        storage.removeItem("runHistory");
 	};
 
 	/**
@@ -297,7 +298,7 @@ export default function DevBench() {
 	const removeRun = (id: string) => {
 		setRunHistory((prev) => {
 			const updated = prev.filter((run) => run.id !== id);
-			localStorage.setItem("runHistory", JSON.stringify(updated));
+            storage.setItem("runHistory", JSON.stringify(updated));
 			return updated;
 		});
 	};
@@ -326,8 +327,8 @@ export default function DevBench() {
 
 	useEffect(() => {
 		// Load the selected function from localStorage when the component mounts
-		const storedFunction = localStorage.getItem("selectedFunction");
-		const storedRunHistory = localStorage.getItem("runHistory");
+		const storedFunction = storage.getItem("selectedFunction");
+		const storedRunHistory = storage.getItem("runHistory");
 
 		if (storedFunction) {
 			setSelectedFunction(JSON.parse(storedFunction));
@@ -347,19 +348,19 @@ export default function DevBench() {
 	useEffect(() => {
 		// Save the selected function to localStorage whenever it changes
 		if (selectedFunction) {
-			localStorage.setItem("selectedFunction", JSON.stringify(selectedFunction));
+			storage.setItem("selectedFunction", JSON.stringify(selectedFunction));
 			// Initialize params with default values from the function schema
 			const defaultParams = generateDefaultParams(selectedFunction);
 			setParamData(defaultParams);
 		} else {
-			localStorage.removeItem("selectedFunction");
+			storage.removeItem("selectedFunction");
 		}
 	}, [selectedFunction]);
 
 	useEffect(() => {
 		// Save run history to localStorage
 		if (runHistory.length > 0) {
-			localStorage.setItem("runHistory", JSON.stringify(runHistory));
+			storage.setItem("runHistory", JSON.stringify(runHistory));
 		}
 	}, [runHistory]);
 
