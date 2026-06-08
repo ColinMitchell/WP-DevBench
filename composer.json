@@ -1,0 +1,67 @@
+{
+	"name": "colinmitchell/wp-devbench",
+	"type": "wordpress-plugin",
+	"description": "A developer sandbox for WordPress that lets you run custom PHP functions, test code snippets, and debug outputs directly in the admin dashboard.",
+	"license": "GPL-2.0-or-later",
+	"homepage": "https://github.com/ColinMitchell/wp-devbench",
+	"version": "1.0.0",
+	"support": {
+		"issues": "https://github.com/ColinMitchell/wp-devbench/issues",
+		"source": "https://github.com/ColinMitchell/wp-devbench",
+		"docs": "https://github.com/ColinMitchell/wp-devbench/blob/main/README.md"
+	},
+	"require": {
+		"php": ">=8.3",
+		"composer/installers": "^2.3"
+	},
+	"require-dev": {
+		"automattic/vipwpcs": "^2.3",
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+		"php-coveralls/php-coveralls": "^2.5",
+		"phpcompatibility/php-compatibility": "10.x-dev as 9.99.99",
+		"phpcompatibility/phpcompatibility-wp": "dev-master",
+		"phpstan/extension-installer": "^1.3",
+		"phpstan/phpstan": "^1.11",
+		"szepeviktor/phpstan-wordpress": "^1.3",
+		"wp-coding-standards/wpcs": "^2.3",
+		"pestphp/pest": "^v4.1.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"WP_DevBench\\Admin\\": "Admin/",
+			"WP_DevBench\\Inc\\": "Inc/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"WP_DevBench\\Tests\\": "Tests/"
+		}
+	},
+	"config": {
+		"sort-packages": true,
+		"optimize-autoloader": true,
+		"preferred-install": "dist",
+		"platform": {
+			"php": "8.3"
+		},
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"phpstan/extension-installer": true,
+			"pestphp/pest-plugin": true,
+			"composer/installers": true
+		}
+	},
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"scripts": {
+		"phpcbf": "vendor/bin/phpcbf -p --standard=phpcs.xml",
+		"phpcs": "vendor/bin/phpcs",
+		"pest": "vendor/bin/pest",
+		"phpstan": "vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=2048M",
+		"test": [
+			"@phpstan",
+			"@phpcs",
+			"@pest"
+		]
+	}
+}
