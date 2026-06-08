@@ -4,7 +4,7 @@
  * Description:       A developer sandbox for WordPress that lets you run custom PHP functions, test code snippets, and debug outputs directly in the admin dashboard.
  * Requires at least: 6.1
  * Requires PHP:      8.3
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            ColinMitchell
  * Author URI:        https://github.com/ColinMitchell
  * Plugin URI:        https://github.com/ColinMitchell
@@ -27,7 +27,7 @@ define( 'WP_DEVBENCH_DIR', plugin_dir_path( __FILE__ ) );
 /**
  * Version of the plugin.
  */
-const WP_DEVBENCH_VERSION = '1.0.0';
+const WP_DEVBENCH_VERSION = '1.0.1';
 
 /**
  * Main file of the plugin
