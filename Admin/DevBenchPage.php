@@ -147,6 +147,6 @@ class DevBenchPage {
 
 		echo '<div class="wp-devbench-plugin-wrap">';
 		echo '<div id="' . esc_attr( self::SCREEN ) . '"></div>';
-		echo '<div class="wp-devbench-plugin-wrap">';
+		echo '</div>';
 	}
 }

@@ -25,13 +25,17 @@ export default function IndexRouter() {
 function InnerContent() {
 	const { isDark } = useTheme();
 
-	return (
-		<div className={isDark ? "dark" : "light"} style={{ colorScheme: isDark ? "dark" : "light" }}>
-			{/*<Header/>*/}
-			<main className="w-full pt-0">
-				<Routes>{isAuthorized(["administrator"]) && <Route path="/" element={<DevBench />} />}</Routes>
-			</main>
-			<Toaster />
-		</div>
-	);
+    return (
+        <div
+            id="wp-devbench-dashboard"
+            className={isDark ? "dark" : "light"}
+            style={{ colorScheme: isDark ? "dark" : "light" }}
+        >
+            {/*<Header/>*/}
+            <main className="w-full pt-0">
+                <Routes>{isAuthorized(["administrator"]) && <Route path="/" element={<DevBench />} />}</Routes>
+            </main>
+            <Toaster />
+        </div>
+    );
 }

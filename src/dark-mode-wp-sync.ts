@@ -3,58 +3,62 @@
  */
 (function (): void {
 	const wpwrap = document.getElementById("wpwrap");
+	const appRoot = document.getElementById("wp-devbench");
 
-	if (!wpwrap) {
+	if (!wpwrap || !appRoot) {
 		return;
 	}
 
-	// Function to sync dark mode
-	const syncDarkMode = (targetElement: Element): void => {
-		const isDarkMode = targetElement.classList.contains("dark");
+	let lastState: boolean | null = null;
 
-		if (isDarkMode) {
-			wpwrap.classList.add("dark");
-		} else {
-			wpwrap.classList.remove("dark");
+	const syncDarkMode = (sourceElement: Element): void => {
+		const shouldBeDark = sourceElement.classList.contains("dark");
+
+		if (shouldBeDark === lastState && wpwrap.classList.contains("dark") === shouldBeDark) {
+			return;
 		}
+
+		lastState = shouldBeDark;
+		wpwrap.classList.toggle("dark", shouldBeDark);
 	};
 
-	// Try to find your React app container
-	// Adjust this selector to match YOUR React app's root element
-	const reactAppContainer = document.querySelector<HTMLElement>("#wp-devbench > div");
+	const observeDashboard = (dashboard: HTMLElement): void => {
+		syncDarkMode(dashboard);
 
-	if (reactAppContainer) {
-		// Initial sync
-		syncDarkMode(reactAppContainer);
-
-		// Watch for class changes on the React container
-		const observer = new MutationObserver((mutations: MutationRecord[]) => {
+		const dashboardObserver = new MutationObserver((mutations: MutationRecord[]) => {
 			mutations.forEach((mutation) => {
 				if (mutation.type === "attributes" && mutation.attributeName === "class") {
-					syncDarkMode(mutation.target as Element);
+					syncDarkMode(dashboard);
 				}
 			});
 		});
 
-		observer.observe(reactAppContainer, {
+		dashboardObserver.observe(dashboard, {
 			attributes: true,
 			attributeFilter: ["class"],
 		});
-	} else {
-		// Fallback: Watch the entire wpwrap for any .dark class additions
-		const observer = new MutationObserver(() => {
-			const darkElement = document.querySelector<HTMLElement>("#wpwrap .dark");
-			if (darkElement && darkElement !== wpwrap) {
-				wpwrap.classList.add("dark");
-			} else if (!darkElement) {
-				wpwrap.classList.remove("dark");
-			}
-		});
+	};
 
-		observer.observe(wpwrap, {
-			subtree: true,
-			attributes: true,
-			attributeFilter: ["class"],
-		});
+	const existingDashboard = document.getElementById("wp-devbench-dashboard");
+
+	if (existingDashboard) {
+		observeDashboard(existingDashboard);
+		return;
 	}
+
+	const waitForDashboard = new MutationObserver(() => {
+		const dashboard = document.getElementById("wp-devbench-dashboard");
+
+		if (!dashboard) {
+			return;
+		}
+
+		waitForDashboard.disconnect();
+		observeDashboard(dashboard);
+	});
+
+	waitForDashboard.observe(appRoot, {
+		childList: true,
+		subtree: true,
+	});
 })();
